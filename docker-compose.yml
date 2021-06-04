@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+
+  server:
+    build: ./TFT-Friendly.Back
+    restart: on-failure
+    ports:
+      - 8080:5000
+    environment:
+      ASPNETCORE_URLS: "http://+:5000"
+    networks:
+      - back-network
+
+  database:
+    image: mongo:latest
+    restart: on-failure
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    ports:
+      - 27017:27017
+    volumes:
+      - database-data:/data/db
+    networks:
+      - back-network
+
+networks:
+  back-network:
+    driver: bridge
+
+volumes:
+  database-data:
