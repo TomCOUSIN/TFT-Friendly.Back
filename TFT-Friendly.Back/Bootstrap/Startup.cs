@@ -1,9 +1,12 @@
 using System;
+using System.IO;
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
 namespace TFT_Friendly.Back.Bootstrap
 {
@@ -46,6 +49,25 @@ namespace TFT_Friendly.Back.Bootstrap
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "TFT-Friendly - API V1",
+                    Description = "TFT-Friendly, your best TFT companion",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Tom COUSIN",
+                        Email = "tom.cousin@epitech.eu"
+                    }
+                });
+                
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
         }
 
         #endregion CONFIGURE_SERVICES
@@ -65,9 +87,14 @@ namespace TFT_Friendly.Back.Bootstrap
 
             app.UseHttpsRedirection();
 
-            app.UseRouting();
+            app.UseSwagger();
 
-            app.UseAuthorization();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "TFT-Friendly - API V1");
+            });
+
+            app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
