@@ -9,7 +9,7 @@ namespace TFT_Friendly.Back.Controllers
     [Produces("application/json")]
     [Route("[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         /// <summary>
         /// Get a user
@@ -17,6 +17,7 @@ namespace TFT_Friendly.Back.Controllers
         /// <returns>An empty string</returns>
         /// <response code="200">Everything worked well</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Route("/sample")]
         [HttpGet]
         public IActionResult GetEmptyUserName()
         {
