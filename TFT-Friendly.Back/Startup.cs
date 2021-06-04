@@ -13,25 +13,58 @@ using Microsoft.Extensions.Logging;
 
 namespace TFT_Friendly.Back
 {
+    /// <summary>
+    /// Startup class
+    /// </summary>
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        #region MEMBERS
+
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _environment;
+
+        #endregion MEMBERS
+
+        #region CONSTRUCTOR
+
+        /// <summary>
+        /// Initialize a new <see cref="Startup"/> class
+        /// </summary>
+        /// <param name="environment">The environment to use</param>
+        /// <param name="configuration">The configuration to use</param>
+        /// <exception cref="ArgumentNullException">
+        /// Throw an <see cref="ArgumentNullException"/> if one of the parameter is null
+        /// </exception>
+        public Startup(IWebHostEnvironment environment, IConfiguration configuration)
         {
-            Configuration = configuration;
+            _environment = environment ?? throw new ArgumentNullException(nameof(environment));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public IConfiguration Configuration { get; }
+        #endregion CONSTRUCTOR
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        #region CONFIGURE_SERVICES
+
+        /// <summary>
+        /// Configures services
+        /// </summary>
+        /// <param name="services">The services to configure</param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        #endregion CONFIGURE_SERVICES
+
+        #region CONFIGURE
+
+        /// <summary>
+        /// Configure the app
+        /// </summary>
+        /// <param name="app">The app to configure</param>
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
+            if (_environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -47,5 +80,7 @@ namespace TFT_Friendly.Back
                 endpoints.MapControllers();
             });
         }
+
+        #endregion CONFIGURE
     }
 }
