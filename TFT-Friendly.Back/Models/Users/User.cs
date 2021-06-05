@@ -15,7 +15,6 @@ namespace TFT_Friendly.Back.Models.Users
         /// </summary>
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        [JsonIgnore]
         public string Id { get; set; }
         
         /// <summary>
