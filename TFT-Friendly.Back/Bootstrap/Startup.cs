@@ -74,7 +74,7 @@ namespace TFT_Friendly.Back.Bootstrap
                 c.IncludeXmlComments(xmlPath);
             });
             
-            services.AddSingleton<UsersMongoService>();
+            services.AddSingleton<UsersContext>();
         }
 
         #endregion CONFIGURE_SERVICES

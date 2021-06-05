@@ -12,11 +12,10 @@ namespace TFT_Friendly.Back.Services.Mongo
     /// <summary>
     /// UsersMongoService class
     /// </summary>
-    public class UsersMongoService
+    public class UsersContext : MongoContext
     {
         #region MEMBERS
-
-        private readonly DatabaseConfiguration _configuration;
+        
         private readonly IMongoCollection<User> _users;
         
         #endregion MEMBERS
@@ -24,16 +23,13 @@ namespace TFT_Friendly.Back.Services.Mongo
         #region CONSTRUCTOR
 
         /// <summary>
-        /// Initialize a new <see cref="UsersMongoService"/> class
+        /// Initialize a new <see cref="UsersContext"/> class
         /// </summary>
         /// <param name="configuration">The configuration to use</param>
         /// <exception cref="ArgumentNullException">Throw an exception if one of the parameter is null</exception>
-        public UsersMongoService(IOptions<DatabaseConfiguration> configuration)
+        public UsersContext(IOptions<DatabaseConfiguration> configuration) : base(configuration)
         {
-            _configuration = configuration.Value ?? throw new ArgumentNullException(nameof(configuration));
-            var client = new MongoClient(_configuration.ConnectionString);
-            var database = client.GetDatabase(_configuration.DatabaseName);
-            _users = database.GetCollection<User>(_configuration.UsersCollectionName);
+            _users = _database.GetCollection<User>(_configuration.UsersCollectionName);
         }
 
         #endregion CONSTRUCTOR

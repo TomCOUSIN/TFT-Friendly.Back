@@ -19,7 +19,7 @@ namespace TFT_Friendly.Back.Controllers
     {
         #region MEMBERS
         
-        private readonly UsersMongoService _usersMongoService;
+        private readonly UsersContext _usersContext;
         private readonly ILogger<UsersController> _logger;
 
         #endregion MEMBERS
@@ -30,12 +30,12 @@ namespace TFT_Friendly.Back.Controllers
         /// Initialize a new <see cref="UsersController"/> class
         /// </summary>
         /// <param name="logger">The logger to use</param>
-        /// <param name="usersMongoService">The users mongo database</param>
+        /// <param name="usersContext">The users mongo database</param>
         /// <exception cref="ArgumentNullException">Throw an exception if one of the parameter is null</exception>
-        public UsersController(ILogger<UsersController> logger, UsersMongoService usersMongoService)
+        public UsersController(ILogger<UsersController> logger, UsersContext usersContext)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _usersMongoService = usersMongoService ?? throw new ArgumentNullException(nameof(usersMongoService));
+            _usersContext = usersContext ?? throw new ArgumentNullException(nameof(usersContext));
         }
 
         #endregion CONSTRUCTOR
@@ -51,7 +51,7 @@ namespace TFT_Friendly.Back.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
-            return Ok(await _usersMongoService.FindAsync());
+            return Ok(await _usersContext.FindAsync());
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace TFT_Friendly.Back.Controllers
         [HttpPost]
         public async Task<IActionResult> PostUser(User user)
         {
-            await _usersMongoService.InsertOneAsync(user);
+            await _usersContext.InsertOneAsync(user);
             return CreatedAtAction(nameof(GetUsers), new {id = user.Id}, user);
         }
 
@@ -78,7 +78,7 @@ namespace TFT_Friendly.Back.Controllers
         [HttpPatch]
         public IActionResult UpdateUser(User user)
         {
-            _usersMongoService.ReplaceOneAsync(user);
+            _usersContext.ReplaceOneAsync(user);
             return Ok(user);
         }
 
@@ -92,7 +92,7 @@ namespace TFT_Friendly.Back.Controllers
         [HttpDelete]
         public IActionResult RemoveUser(User user)
         {
-            _usersMongoService.DeleteOneAsync(user);
+            _usersContext.DeleteOneAsync(user);
             return Ok(user);
         }
 
