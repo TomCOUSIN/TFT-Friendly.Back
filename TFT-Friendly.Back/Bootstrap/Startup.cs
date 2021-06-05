@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using TFT_Friendly.Back.Models.Configurations;
+using TFT_Friendly.Back.Services.Mongo;
 
 namespace TFT_Friendly.Back.Bootstrap
 {
@@ -49,6 +51,9 @@ namespace TFT_Friendly.Back.Bootstrap
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            
+            services.Configure<DatabaseConfiguration>(_configuration.GetSection("DatabaseSettings"));
+            services.ConfigureOptions<DatabaseConfiguration>();
 
             services.AddSwaggerGen(c =>
             {
@@ -68,6 +73,8 @@ namespace TFT_Friendly.Back.Bootstrap
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
+            
+            services.AddSingleton<UsersMongoService>();
         }
 
         #endregion CONFIGURE_SERVICES
