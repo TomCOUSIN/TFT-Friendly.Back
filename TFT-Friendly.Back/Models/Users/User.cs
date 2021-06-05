@@ -21,7 +21,7 @@ namespace TFT_Friendly.Back.Models.Users
         /// Name of the user stored in database
         /// </summary>
         [BsonElement("Name")]
-        private string _name;
+        private string _username;
         
         /// <summary>
         /// Password of the user stored in database
@@ -33,10 +33,11 @@ namespace TFT_Friendly.Back.Models.Users
         /// Name of the user
         /// </summary>
         [BsonIgnore]
-        public string Name
+        
+        public string Username
         {
-            get => CipherHandler.Decrypt(_name);
-            set => _name = CipherHandler.Encrypt(value);
+            get => CipherHandler.Decrypt(_username);
+            set => _username = CipherHandler.Encrypt(value);
         }
 
         /// <summary>
