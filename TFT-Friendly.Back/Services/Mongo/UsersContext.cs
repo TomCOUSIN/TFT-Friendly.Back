@@ -29,7 +29,7 @@ namespace TFT_Friendly.Back.Services.Mongo
         /// <exception cref="ArgumentNullException">Throw an exception if one of the parameter is null</exception>
         public UsersContext(IOptions<DatabaseConfiguration> configuration) : base(configuration)
         {
-            _users = _database.GetCollection<User>(_configuration.UsersCollectionName);
+            _users = Database.GetCollection<User>(Configuration.UsersCollectionName);
         }
 
         #endregion CONSTRUCTOR

@@ -12,9 +12,9 @@ namespace TFT_Friendly.Back.Services.Mongo
     {
         #region MEMBERS
 
-        protected readonly DatabaseConfiguration _configuration;
+        protected readonly DatabaseConfiguration Configuration;
         private readonly IMongoClient _client;
-        protected readonly IMongoDatabase _database;
+        protected readonly IMongoDatabase Database;
 
         #endregion MEMBERS
 
@@ -27,9 +27,9 @@ namespace TFT_Friendly.Back.Services.Mongo
         /// <exception cref="ArgumentNullException">Throw an exception if one argument is null</exception>
         public MongoContext(IOptions<DatabaseConfiguration> configuration)
         {
-            _configuration = configuration.Value ?? throw new ArgumentNullException(nameof(configuration));
-            _client = new MongoClient(_configuration.ConnectionString);
-            _database = _client.GetDatabase(_configuration.DatabaseName);
+            Configuration = configuration.Value ?? throw new ArgumentNullException(nameof(configuration));
+            _client = new MongoClient(Configuration.ConnectionString);
+            Database = _client.GetDatabase(Configuration.DatabaseName);
         }
 
         #endregion CONSTRUCTOR
