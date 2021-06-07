@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -33,6 +34,22 @@ namespace TFT_Friendly.Back.Services.Mongo
         }
 
         #endregion CONSTRUCTOR
+
+        #region METHODS
+
+        /// <summary>
+        /// Verify if the user given as parameter is valid
+        /// </summary>
+        /// <param name="user">The user to verify</param>
+        /// <returns>The user if valid, null otherwise</returns>
+        public User IsUserValid(User user)
+        {
+            var filter =
+                Builders<User>.Filter.Where(u => u.Username == user.Username && u.Password == user.Password);
+
+            var userIn = _users.Find(filter);
+            return userIn.FirstOrDefault();
+        }
         
         #region FIND
         
@@ -50,10 +67,10 @@ namespace TFT_Friendly.Back.Services.Mongo
         /// </summary>
         /// <param name="id">The id of the user</param>
         /// <returns>The user</returns>
-        public async Task<User> FindOneByIdAsync(string id)
+        public User FindOneById(string id)
         {
-            var user = await _users.FindAsync(u => u.Id == id);
-            return await user.FirstOrDefaultAsync();
+            var user = _users.Find(u => u.Id == id);
+            return user.FirstOrDefault();
         }
         
         #endregion FIND
@@ -65,9 +82,9 @@ namespace TFT_Friendly.Back.Services.Mongo
         /// </summary>
         /// <param name="user">The user to add</param>
         /// <returns>The newly inserted user</returns>
-        public async Task<User> InsertOneAsync(User user)
+        public User InsertOne(User user)
         {
-            await _users.InsertOneAsync(user);
+            _users.InsertOne(user);
             return user;
         }
         
@@ -117,5 +134,7 @@ namespace TFT_Friendly.Back.Services.Mongo
         }
 
         #endregion DELETE
+        
+        #endregion METHODS
     }
 }
