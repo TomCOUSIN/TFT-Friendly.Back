@@ -10,6 +10,8 @@ namespace TFT_Friendly.Back.Services.Users
     {
         string AuthenticateUser(User user);
         User GetMe(string id);
+        
+        User PatchMe(string id, User user);
 
         string RegisterUser(User user);
     }

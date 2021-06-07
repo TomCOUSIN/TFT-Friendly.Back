@@ -75,6 +75,18 @@ namespace TFT_Friendly.Back.Services.Users
         }
 
         /// <summary>
+        /// Patch the user information
+        /// </summary>
+        /// <param name="id">The id of the user</param>
+        /// <param name="user">The new user information</param>
+        /// <returns>The patched user</returns>
+        public User PatchMe(string id, User user)
+        {
+            _usersContext.ReplaceOneById(id, user);
+            return user;
+        }
+
+        /// <summary>
         /// Register a new user
         /// </summary>
         /// <param name="user">The user to register</param>
