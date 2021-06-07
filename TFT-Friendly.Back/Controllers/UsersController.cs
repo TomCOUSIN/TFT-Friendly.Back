@@ -34,7 +34,7 @@ namespace TFT_Friendly.Back.Controllers
         /// Initialize a new <see cref="UsersController"/> class
         /// </summary>
         /// <param name="logger">The logger to use</param>
-        /// <param name="usersContext">The users mongo database</param>
+        /// <param name="userService">The user service to manage users</param>
         /// <exception cref="ArgumentNullException">Throw an exception if one of the parameter is null</exception>
         public UsersController(ILogger<UsersController> logger, IUserService userService)
         {
