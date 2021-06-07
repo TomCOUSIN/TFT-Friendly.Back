@@ -7,8 +7,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using TFT_Friendly.Back.Middlewares;
 using TFT_Friendly.Back.Models.Configurations;
 using TFT_Friendly.Back.Services.Mongo;
+using TFT_Friendly.Back.Services.Users;
 
 namespace TFT_Friendly.Back.Bootstrap
 {
@@ -50,10 +52,15 @@ namespace TFT_Friendly.Back.Bootstrap
         /// <param name="services">The services to configure</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+            
             services.AddControllers();
             
             services.Configure<DatabaseConfiguration>(_configuration.GetSection("DatabaseSettings"));
             services.ConfigureOptions<DatabaseConfiguration>();
+            
+            services.Configure<JwtConfiguration>(_configuration.GetSection("JwtSettings"));
+            services.ConfigureOptions<JwtConfiguration>();
 
             services.AddSwaggerGen(c =>
             {
@@ -74,6 +81,7 @@ namespace TFT_Friendly.Back.Bootstrap
                 c.IncludeXmlComments(xmlPath);
             });
             
+            services.AddScoped<IUserService, UserService>();
             services.AddSingleton<UsersContext>();
         }
 
@@ -102,6 +110,13 @@ namespace TFT_Friendly.Back.Bootstrap
             });
 
             app.UseRouting();
+            
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+            
+            app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
