@@ -52,6 +52,12 @@ namespace TFT_Friendly.Back.Controllers
             return Ok(_userService.GetMe((string)HttpContext.Items["UserId"]));
         }
 
+        [HttpPatch("/me")]
+        public IActionResult PatchMe(User user)
+        {
+            return Ok(_userService.PatchMe((string)HttpContext.Items["UserId"], user));
+        }
+
         #endregion ROUTES
     }
 }
