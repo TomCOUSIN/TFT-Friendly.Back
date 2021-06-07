@@ -96,9 +96,9 @@ namespace TFT_Friendly.Back.Services.Mongo
         /// Replace a user
         /// </summary>
         /// <param name="userIn">The user to replace</param>
-        public async void ReplaceOneAsync(User userIn)
-        {
-            await _users.ReplaceOneAsync(user => user.Id == userIn.Id, userIn);
+        public void ReplaceOne(User userIn)
+        { 
+            _users.ReplaceOneAsync(user => user.Id == userIn.Id, userIn);
         }
         
         /// <summary>
@@ -106,9 +106,10 @@ namespace TFT_Friendly.Back.Services.Mongo
         /// </summary>
         /// <param name="id">The id of the user</param>
         /// <param name="userIn">The user to replace</param>
-        public async void ReplaceOneByIdAsync(string id, User userIn)
+        public void ReplaceOneById(string id, User userIn)
         {
-            await _users.ReplaceOneAsync(user => user.Id == id, userIn);
+            userIn.Id = id;
+            _users.ReplaceOneAsync(user => user.Id == id, userIn);
         }
 
         #endregion REPLACE
