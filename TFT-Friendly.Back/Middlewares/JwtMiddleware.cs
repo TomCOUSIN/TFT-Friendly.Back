@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using TFT_Friendly.Back.Models.Configurations;
-using TFT_Friendly.Back.Services.Users;
 
 namespace TFT_Friendly.Back.Middlewares
 {
