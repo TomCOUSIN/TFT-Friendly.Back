@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using TFT_Friendly.Back.Models.Users;
 
 namespace TFT_Friendly.Back.Services.Users
