@@ -1,7 +1,5 @@
-using System.Text.Json.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using TFT_Friendly.Back.Utils.CipherHandler;
 
 namespace TFT_Friendly.Back.Models.Users
 {
