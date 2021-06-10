@@ -2,6 +2,7 @@ using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using TFT_Friendly.Back.Models.Errors;
 
 namespace TFT_Friendly.Back.Attributes
 {
@@ -23,13 +24,13 @@ namespace TFT_Friendly.Back.Attributes
 
                 if (userId.Length <= 0)
                 {
-                    context.Result = new JsonResult(new {message = "Unauthorized"})
+                    context.Result = new JsonResult(new HttpError(StatusCodes.Status401Unauthorized, "Unauthorized"))
                         {StatusCode = StatusCodes.Status401Unauthorized};
                 }
             }
             catch
             {
-                context.Result = new JsonResult(new {message = "Unauthorized"})
+                context.Result = new JsonResult(new HttpError(StatusCodes.Status401Unauthorized, "Unauthorized"))
                     {StatusCode = StatusCodes.Status401Unauthorized};
             }
         }
