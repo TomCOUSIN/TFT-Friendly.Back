@@ -13,7 +13,6 @@ namespace TFT_Friendly.Back.Services.Mongo
         #region MEMBERS
 
         protected readonly DatabaseConfiguration Configuration;
-        private readonly IMongoClient _client;
         protected readonly IMongoDatabase Database;
 
         #endregion MEMBERS
@@ -28,8 +27,8 @@ namespace TFT_Friendly.Back.Services.Mongo
         public MongoContext(IOptions<DatabaseConfiguration> configuration)
         {
             Configuration = configuration.Value ?? throw new ArgumentNullException(nameof(configuration));
-            _client = new MongoClient(Configuration.ConnectionString);
-            Database = _client.GetDatabase(Configuration.DatabaseName);
+            IMongoClient client = new MongoClient(Configuration.ConnectionString);
+            Database = client.GetDatabase(Configuration.DatabaseName);
         }
 
         #endregion CONSTRUCTOR
