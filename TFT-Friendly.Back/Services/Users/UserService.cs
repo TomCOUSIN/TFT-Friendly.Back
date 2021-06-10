@@ -1,10 +1,11 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using TFT_Friendly.Back.Exceptions;
 using TFT_Friendly.Back.Models.Configurations;
 using TFT_Friendly.Back.Models.Users;
 using TFT_Friendly.Back.Services.Mongo;
@@ -48,9 +49,13 @@ namespace TFT_Friendly.Back.Services.Users
         /// <returns>The token corresponding to the right user</returns>
         public string AuthenticateUser(User user)
         {
-            var userIn = _usersContext.IsUserValid(user);
+            var userExist = _usersContext.IsUserExist(user.Username);
 
-            if (userIn == null) return string.Empty;
+            if (!userExist) throw new UserNotFoundException("Username doesn't exit.");
+
+            var userIn = _usersContext.FindOneByUsernameAndPassword(user.Username, user.Password);
+
+            if (userIn == null) throw new InvalidPasswordException("Incorrect password for this user.");
             
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration.Secret);
@@ -82,6 +87,7 @@ namespace TFT_Friendly.Back.Services.Users
         /// <returns>The patched user</returns>
         public User PatchMe(string id, User user)
         {
+            VerifyPassword(user.Password);
             _usersContext.ReplaceOneById(id, user);
             return user;
         }
@@ -93,8 +99,35 @@ namespace TFT_Friendly.Back.Services.Users
         /// <returns>The token for the new user</returns>
         public string RegisterUser(User user)
         {
+            if (_usersContext.IsUserExist(user.Username))
+            {
+                throw new UserConflictException("User with this username already exist.");
+            }
+            VerifyPassword(user.Password);
             _usersContext.InsertOne(user);
             return AuthenticateUser(user);
+        }
+
+        /// <summary>
+        /// Verify if the password of the user is valid or not
+        /// </summary>
+        /// <param name="password">The password to verify</param>
+        private void VerifyPassword(string password)
+        {
+            if (password.Length < 8)
+            {
+                throw new PasswordFormatException("The password should contains at least 8 characters minimum.");
+            }
+
+            if (!password.Any(char.IsDigit))
+            {
+                throw new PasswordFormatException("The password should contains at least 1 number.");
+            }
+
+            if (!(password.Any(ch => !char.IsLetterOrDigit(ch))))
+            {
+                throw new PasswordFormatException("The password should contains at least 1 special character.");
+            }
         }
 
         #endregion METHODS
