@@ -26,5 +26,17 @@ namespace TFT_Friendly.Back.Models.Users
         /// </summary>
         [BsonElement("Password")]
         public string Password { get; set; }
+
+        /// <summary>
+        /// SummonerLevel of the user
+        /// </summary>
+        [BsonElement("SummonerLevel")]
+        public int SummonerLevel { get; set; }
+        
+        /// <summary>
+        /// Unique LeagueId of the user
+        /// </summary>
+        [BsonElement("LeagueId")]
+        public string LeagueId { get; set; }
     }
 }
