@@ -1,5 +1,8 @@
+using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Refit;
+using TFT_Friendly.Back.Models.Configurations;
 using TFT_Friendly.Back.Models.Users;
 
 namespace TFT_Friendly.Back.Clients
@@ -10,8 +13,7 @@ namespace TFT_Friendly.Back.Clients
     public interface ILeagueOfLegendsClient
     {
         [Get("/tft/summoner/v1/summoners/by-name/{summonerName}")]
-        [Headers("X-Riot-Token: RGAPI-82d1ddd8-4ea4-460e-9715-ef81e756b1e5")]
-        Task<LeagueOfLegendsUser> GetUserInformation(string summonerName);
+        Task<LeagueOfLegendsUser> GetUserInformation(string summonerName, [Header("X-Riot-Token")] string riotToken);
     }
 
     /// <summary>
@@ -22,6 +24,7 @@ namespace TFT_Friendly.Back.Clients
         #region MEMBERS
 
         private readonly ILeagueOfLegendsClient _api;
+        private readonly RiotApiConfiguration _configuration;
 
         #endregion MEMBERS
 
@@ -30,8 +33,9 @@ namespace TFT_Friendly.Back.Clients
         /// <summary>
         /// Initialize a new <see cref="LeagueOfLegendsClient"/> class
         /// </summary>
-        public LeagueOfLegendsClient()
+        public LeagueOfLegendsClient(IOptions<RiotApiConfiguration> configuration)
         {
+            _configuration = configuration.Value ?? throw new ArgumentNullException(nameof(configuration));
             _api = RestService.For<ILeagueOfLegendsClient>(Constants.ClientsBaseUrlConstants.LeagueOfLegendsClientBaseUrl);
         }
 
@@ -45,7 +49,7 @@ namespace TFT_Friendly.Back.Clients
         /// <returns></returns>
         public async Task<LeagueOfLegendsUser> GetUserInformation(string username)
         {
-            return await _api.GetUserInformation(username).ConfigureAwait(false);
+            return await _api.GetUserInformation(username, _configuration.Token).ConfigureAwait(false);
         }
 
         #endregion METHODS

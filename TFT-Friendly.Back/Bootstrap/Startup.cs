@@ -63,6 +63,9 @@ namespace TFT_Friendly.Back.Bootstrap
             
             services.Configure<JwtConfiguration>(_configuration.GetSection("JwtSettings"));
             services.ConfigureOptions<JwtConfiguration>();
+            
+            services.Configure<RiotApiConfiguration>(_configuration.GetSection("RiotApiSettings"));
+            services.ConfigureOptions<RiotApiConfiguration>();
 
             services.AddSwaggerGen(c =>
             {
