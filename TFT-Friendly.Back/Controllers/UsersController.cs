@@ -79,6 +79,21 @@ namespace TFT_Friendly.Back.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete the user
+        /// </summary>
+        /// <returns>Nothing is return</returns>
+        /// <response code="200">Everything worked well.</response>
+        /// <response code="401">Unauthorized request for this user.</response>
+        [HttpDelete("/me")]
+        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(HttpError), StatusCodes.Status401Unauthorized)]
+        public IActionResult DeleteMe()
+        {
+            _userService.DeleteMe((string) HttpContext.Items["UserId"]);
+            return Ok();
+        }
+
         #endregion ROUTES
     }
 }

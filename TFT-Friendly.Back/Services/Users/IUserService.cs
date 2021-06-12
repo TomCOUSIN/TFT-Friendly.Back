@@ -13,6 +13,8 @@ namespace TFT_Friendly.Back.Services.Users
         
         User PatchMe(string id, User user);
 
+        void DeleteMe(string id);
+
         Task<string> RegisterUser(User user);
     }
 }

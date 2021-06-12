@@ -97,6 +97,15 @@ namespace TFT_Friendly.Back.Services.Users
         }
 
         /// <summary>
+        /// Delete a user
+        /// </summary>
+        /// <param name="id">The id of the user</param>
+        public void DeleteMe(string id)
+        {
+            _usersContext.DeleteOneById(id);
+        }
+
+        /// <summary>
         /// Register a new user
         /// </summary>
         /// <param name="user">The user to register</param>
