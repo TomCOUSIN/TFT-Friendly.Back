@@ -3,8 +3,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using TFT_Friendly.Back.Clients;
 using TFT_Friendly.Back.Exceptions;
 using TFT_Friendly.Back.Models.Configurations;
 using TFT_Friendly.Back.Models.Users;
@@ -21,6 +23,7 @@ namespace TFT_Friendly.Back.Services.Users
 
         private readonly JwtConfiguration _configuration;
         private readonly UsersContext _usersContext;
+        private readonly LeagueOfLegendsClient _client;
 
         #endregion MEMBERS
 
@@ -31,11 +34,13 @@ namespace TFT_Friendly.Back.Services.Users
         /// </summary>
         /// <param name="configuration">The configuration to use</param>
         /// <param name="usersContext">The context to use</param>
+        /// <param name="client">The client to retrieve user information from League Of Legends API</param>
         /// <exception cref="ArgumentNullException">Throw an exception if on parameter is null</exception>
-        public UserService(IOptions<JwtConfiguration> configuration, UsersContext usersContext)
+        public UserService(IOptions<JwtConfiguration> configuration, UsersContext usersContext, LeagueOfLegendsClient client)
         {
             _configuration = configuration.Value ?? throw new ArgumentNullException(nameof(configuration));
             _usersContext = usersContext ?? throw new ArgumentNullException(nameof(usersContext));
+            _client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
         #endregion CONSTRUCTOR
@@ -67,7 +72,6 @@ namespace TFT_Friendly.Back.Services.Users
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
-
         }
 
         /// <summary>
@@ -97,13 +101,18 @@ namespace TFT_Friendly.Back.Services.Users
         /// </summary>
         /// <param name="user">The user to register</param>
         /// <returns>The token for the new user</returns>
-        public string RegisterUser(User user)
+        public async Task<string> RegisterUser(User user)
         {
             if (_usersContext.IsUserExist(user.Username))
             {
                 throw new UserConflictException("User with this username already exist.");
             }
             VerifyPassword(user.Password);
+            
+            var userInformation = await _client.GetUserInformation(user.Username).ConfigureAwait(false);
+            user.LeagueId = userInformation.Puuid;
+            user.SummonerLevel = userInformation.SummonerLevel;
+
             _usersContext.InsertOne(user);
             return AuthenticateUser(user);
         }

@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using TFT_Friendly.Back.Models.Users;
 
 namespace TFT_Friendly.Back.Services.Users
@@ -12,6 +13,6 @@ namespace TFT_Friendly.Back.Services.Users
         
         User PatchMe(string id, User user);
 
-        string RegisterUser(User user);
+        Task<string> RegisterUser(User user);
     }
 }

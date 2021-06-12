@@ -1,6 +1,8 @@
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Refit;
 using TFT_Friendly.Back.Exceptions;
 using TFT_Friendly.Back.Models.Errors;
 using TFT_Friendly.Back.Models.Users;
@@ -78,12 +80,12 @@ namespace TFT_Friendly.Back.Controllers
         [ProducesResponseType(typeof(UserToken), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(HttpError),StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(HttpError),StatusCodes.Status409Conflict)]
-        public IActionResult Register(User user)
+        public async Task<IActionResult> Register(User user)
         {
             try
             {
-                var token = _userService.RegisterUser(user);
-                return CreatedAtAction(nameof(Login), new UserToken{Token =  token});
+                var token = await _userService.RegisterUser(user).ConfigureAwait(false);
+                return CreatedAtAction(nameof(Login), new UserToken {Token = token});
             }
             catch (UserConflictException exception)
             {
@@ -92,6 +94,11 @@ namespace TFT_Friendly.Back.Controllers
             catch (PasswordFormatException exception)
             {
                 return BadRequest(new HttpError(StatusCodes.Status400BadRequest, exception.Message));
+            }
+            catch (ApiException exception)
+            {
+                return StatusCode((int)exception.StatusCode,
+                    new HttpError((int)exception.StatusCode, exception.Message));
             }
         }
 

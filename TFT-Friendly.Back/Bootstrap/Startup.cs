@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using TFT_Friendly.Back.Clients;
 using TFT_Friendly.Back.Middlewares;
 using TFT_Friendly.Back.Models.Configurations;
 using TFT_Friendly.Back.Services.Mongo;
@@ -111,6 +112,7 @@ namespace TFT_Friendly.Back.Bootstrap
             
             services.AddScoped<IUserService, UserService>();
             services.AddSingleton<UsersContext>();
+            services.AddSingleton<LeagueOfLegendsClient>();
         }
 
         #endregion CONFIGURE_SERVICES
