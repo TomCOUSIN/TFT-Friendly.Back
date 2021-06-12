@@ -16,9 +16,9 @@ namespace TFT_Friendly.Back.Models.Configurations
 
         public void Configure(JwtConfiguration options)
         {
-            Secret = options.Secret ?? throw new ArgumentNullException(nameof(options.Secret));
+            Secret = options.Secret ?? throw new ArgumentNullException(nameof(options));
             ExpirationTime = options.ExpirationTime > 0 ? options.ExpirationTime : 
-                throw new ArgumentNullException(nameof(options.ExpirationTime));
+                throw new ArgumentNullException(nameof(options));
         }
     }
 }
