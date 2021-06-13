@@ -13,8 +13,12 @@ namespace TFT_Friendly.Back.Services.Items
         List<Item> GetItemList();
         
         Item GetItem(int itemId);
+
+        Item AddItem(Item item);
         
         Item UpdateItem(Item item);
+        
+        Item UpdateItem(int itemId, Item item);
 
         void DeleteItem(int itemId);
     }

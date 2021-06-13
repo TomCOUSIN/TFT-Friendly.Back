@@ -34,6 +34,17 @@ namespace TFT_Friendly.Back.Services.Mongo
         #region METHODS
 
         /// <summary>
+        /// Verify if an item exist
+        /// </summary>
+        /// <param name="itemId">The id of the item to verify</param>
+        /// <returns>True if exist, false otherwise</returns>
+        public bool IsItemExist(int itemId)
+        {
+            var item = _items.Find(i => i.ItemId == itemId).FirstOrDefault();
+            return item != null;
+        }
+
+        /// <summary>
         /// Get all the items
         /// </summary>
         /// <returns></returns>
@@ -82,6 +93,19 @@ namespace TFT_Friendly.Back.Services.Mongo
         public Item UpdateItem(Item item)
         {
             var filter = Builders<Item>.Filter.Eq("ItemId", item.ItemId);
+            _items.ReplaceOne(filter, item);
+            return item;
+        }
+        
+        /// <summary>
+        /// Update a specific item
+        /// </summary>
+        /// <param name="itemId">The id of the item to update</param>
+        /// <param name="item">The item to update</param>
+        /// <returns>The newly updated item</returns>
+        public Item UpdateItem(int itemId, Item item)
+        {
+            var filter = Builders<Item>.Filter.Eq("ItemId", itemId);
             _items.ReplaceOne(filter, item);
             return item;
         }
