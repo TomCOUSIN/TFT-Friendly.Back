@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using TFT_Friendly.Back.Models.Items;
-using TFT_Friendly.Back.Models.Users;
 
 namespace TFT_Friendly.Back.Services.Items
 {
