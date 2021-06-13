@@ -1,11 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using TFT_Friendly.Back.Attributes;
+using TFT_Friendly.Back.Exceptions;
+using TFT_Friendly.Back.Models.Errors;
 using TFT_Friendly.Back.Models.Users;
-using TFT_Friendly.Back.Services.Mongo;
+using TFT_Friendly.Back.Services.Users;
 
 namespace TFT_Friendly.Back.Controllers
 {
@@ -15,12 +15,12 @@ namespace TFT_Friendly.Back.Controllers
     [Produces("application/json")]
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         #region MEMBERS
-        
-        private readonly UsersMongoService _usersMongoService;
-        private readonly ILogger<UsersController> _logger;
+
+        private readonly IUserService _userService;
 
         #endregion MEMBERS
 
@@ -29,13 +29,11 @@ namespace TFT_Friendly.Back.Controllers
         /// <summary>
         /// Initialize a new <see cref="UsersController"/> class
         /// </summary>
-        /// <param name="logger">The logger to use</param>
-        /// <param name="usersMongoService">The users mongo database</param>
+        /// <param name="userService">The user service to manage users</param>
         /// <exception cref="ArgumentNullException">Throw an exception if one of the parameter is null</exception>
-        public UsersController(ILogger<UsersController> logger, UsersMongoService usersMongoService)
+        public UsersController(IUserService userService)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _usersMongoService = usersMongoService ?? throw new ArgumentNullException(nameof(usersMongoService));
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
         #endregion CONSTRUCTOR
@@ -43,29 +41,57 @@ namespace TFT_Friendly.Back.Controllers
         #region ROUTES
 
         /// <summary>
-        /// Get all the users
+        /// Get user information
         /// </summary>
-        /// <returns>The list of users</returns>
-        /// <response code="200">Everything worked well</response>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        /// <returns>The information of the user</returns>
+        /// <response code="200">Everything worked well.</response>
+        /// <response code="401">Unauthorized request for this user.</response>
+        [HttpGet("/me")]
+        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(HttpError), StatusCodes.Status401Unauthorized)]
+        public IActionResult GetMe()
         {
-            return Ok(await _usersMongoService.FindAsync());
+            return Ok(_userService.GetMe((string)HttpContext.Items["UserId"]));
         }
 
         /// <summary>
-        /// Post a new <see cref="User"/>
+        /// Patch the user information
         /// </summary>
-        /// <param name="user">The user to add</param>
-        /// <returns>The newly created user</returns>
-        /// <response code="201">The user as been created successfully</response>
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [HttpPost]
-        public async Task<IActionResult> PostUser(User user)
+        /// <param name="user">The new information of the user</param>
+        /// <returns>The user with new information</returns>
+        /// <response code="200">Everything worked well.</response>
+        /// <response code="400">Wrong information format.</response>
+        /// <response code="401">Unauthorized request for this user.</response>
+        [HttpPatch("/me")]
+        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(HttpError), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(HttpError), StatusCodes.Status401Unauthorized)]
+        public IActionResult PatchMe(User user)
         {
-            await _usersMongoService.InsertOneAsync(user);
-            return CreatedAtAction(nameof(GetUsers), new {id = user.Id}, user);
+            try
+            {
+                _userService.PatchMe((string) HttpContext.Items["UserId"], user);
+                return Ok(user);
+            }
+            catch (PasswordFormatException exception)
+            {
+                return BadRequest(new HttpError(StatusCodes.Status400BadRequest, exception.Message));
+            }
+        }
+
+        /// <summary>
+        /// Delete the user
+        /// </summary>
+        /// <returns>Nothing is return</returns>
+        /// <response code="200">Everything worked well.</response>
+        /// <response code="401">Unauthorized request for this user.</response>
+        [HttpDelete("/me")]
+        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(HttpError), StatusCodes.Status401Unauthorized)]
+        public IActionResult DeleteMe()
+        {
+            _userService.DeleteMe((string) HttpContext.Items["UserId"]);
+            return Ok();
         }
 
         #endregion ROUTES

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using TFT_Friendly.Back.Models.Configurations;
 using TFT_Friendly.Back.Models.Users;
@@ -12,11 +10,10 @@ namespace TFT_Friendly.Back.Services.Mongo
     /// <summary>
     /// UsersMongoService class
     /// </summary>
-    public class UsersMongoService
+    public class UsersContext : MongoContext
     {
         #region MEMBERS
-
-        private readonly DatabaseConfiguration _configuration;
+        
         private readonly IMongoCollection<User> _users;
         
         #endregion MEMBERS
@@ -24,19 +21,30 @@ namespace TFT_Friendly.Back.Services.Mongo
         #region CONSTRUCTOR
 
         /// <summary>
-        /// Initialize a new <see cref="UsersMongoService"/> class
+        /// Initialize a new <see cref="UsersContext"/> class
         /// </summary>
         /// <param name="configuration">The configuration to use</param>
         /// <exception cref="ArgumentNullException">Throw an exception if one of the parameter is null</exception>
-        public UsersMongoService(IOptions<DatabaseConfiguration> configuration)
+        public UsersContext(IOptions<DatabaseConfiguration> configuration) : base(configuration)
         {
-            _configuration = configuration.Value ?? throw new ArgumentNullException(nameof(configuration));
-            var client = new MongoClient(_configuration.ConnectionString);
-            var database = client.GetDatabase(_configuration.DatabaseName);
-            _users = database.GetCollection<User>(_configuration.UsersCollectionName);
+            _users = Database.GetCollection<User>(Configuration.UsersCollectionName);
         }
 
         #endregion CONSTRUCTOR
+
+        #region METHODS
+
+        /// <summary>
+        /// Verify if the username exist
+        /// </summary>
+        /// <param name="username">The username to verify</param>
+        /// <returns>True if the username is valid, null otherwise</returns>
+        public bool IsUserExist(string username)
+        {
+            var filter = Builders<User>.Filter.Where(u => u.Username == username);
+            var userIn = _users.Find(filter);
+            return userIn.FirstOrDefault() != null;
+        }
         
         #region FIND
         
@@ -44,9 +52,23 @@ namespace TFT_Friendly.Back.Services.Mongo
         /// Find all the users
         /// </summary>
         /// <returns>The list of users</returns>
-        public async Task<List<User>> FindAsync()
+        public List<User> FindAsync()
         {
-            return await _users.Find(user => true).ToListAsync();
+            return _users.Find(user => true).ToList();
+        }
+
+        /// <summary>
+        /// Find a specific user
+        /// </summary>
+        /// <param name="username">The username of the user</param>
+        /// <param name="password">The password of the user</param>
+        /// <returns>The user</returns>
+        public User FindOneByUsernameAndPassword(string username, string password)
+        {
+            var filter = 
+                Builders<User>.Filter.Where(u => u.Username == username && u.Password == password);
+            var userIn = _users.Find(filter);
+            return userIn.FirstOrDefault();
         }
 
         /// <summary>
@@ -54,10 +76,10 @@ namespace TFT_Friendly.Back.Services.Mongo
         /// </summary>
         /// <param name="id">The id of the user</param>
         /// <returns>The user</returns>
-        public async Task<User> FindOneByIdAsync(string id)
+        public User FindOneById(string id)
         {
-            var user = await _users.FindAsync(u => u.Id == id);
-            return await user.FirstOrDefaultAsync();
+            var user = _users.Find(u => u.Id == id);
+            return user.FirstOrDefault();
         }
         
         #endregion FIND
@@ -69,9 +91,9 @@ namespace TFT_Friendly.Back.Services.Mongo
         /// </summary>
         /// <param name="user">The user to add</param>
         /// <returns>The newly inserted user</returns>
-        public async Task<User> InsertOneAsync(User user)
+        public User InsertOne(User user)
         {
-            await _users.InsertOneAsync(user);
+            _users.InsertOne(user);
             return user;
         }
         
@@ -83,9 +105,9 @@ namespace TFT_Friendly.Back.Services.Mongo
         /// Replace a user
         /// </summary>
         /// <param name="userIn">The user to replace</param>
-        public async void ReplaceOneAsync(User userIn)
-        {
-            await _users.ReplaceOneAsync(user => user.Id == userIn.Id, userIn);
+        public void ReplaceOne(User userIn)
+        { 
+            _users.ReplaceOne(user => user.Id == userIn.Id, userIn);
         }
         
         /// <summary>
@@ -93,9 +115,10 @@ namespace TFT_Friendly.Back.Services.Mongo
         /// </summary>
         /// <param name="id">The id of the user</param>
         /// <param name="userIn">The user to replace</param>
-        public async void ReplaceOneByIdAsync(string id, User userIn)
+        public void ReplaceOneById(string id, User userIn)
         {
-            await _users.ReplaceOneAsync(user => user.Id == id, userIn);
+            userIn.Id = id;
+            _users.ReplaceOne(user => user.Id == id, userIn);
         }
 
         #endregion REPLACE
@@ -106,20 +129,22 @@ namespace TFT_Friendly.Back.Services.Mongo
         /// Delete a user
         /// </summary>
         /// <param name="userIn">The user to delete</param>
-        public async void DeleteOneAsync(User userIn)
+        public void DeleteOne(User userIn)
         {
-            await _users.DeleteOneAsync(user => user.Id == userIn.Id);
+            _users.DeleteOne(user => user.Id == userIn.Id);
         }
 
         /// <summary>
         /// Delete a user according to is id
         /// </summary>
         /// <param name="id">The id of the user to delete</param>
-        public async void DeleteOneByIdAsync(string id)
+        public void DeleteOneById(string id)
         {
-            await _users.DeleteOneAsync(user => user.Id == id);
+            _users.DeleteOne(user => user.Id == id);
         }
 
         #endregion DELETE
+        
+        #endregion METHODS
     }
 }

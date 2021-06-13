@@ -1,7 +1,5 @@
-using System.Text.Json.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using TFT_Friendly.Back.Utils.CipherHandler;
 
 namespace TFT_Friendly.Back.Models.Users
 {
@@ -15,39 +13,48 @@ namespace TFT_Friendly.Back.Models.Users
         /// </summary>
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        [JsonIgnore]
         public string Id { get; set; }
-        
-        /// <summary>
-        /// Name of the user stored in database
-        /// </summary>
-        [BsonElement("Name")]
-        private string _name;
-        
-        /// <summary>
-        /// Password of the user stored in database
-        /// </summary>
-        [BsonElement("Password")]
-        private string _password;
 
         /// <summary>
         /// Name of the user
         /// </summary>
-        [BsonIgnore]
-        public string Name
-        {
-            get => CipherHandler.Decrypt(_name);
-            set => _name = CipherHandler.Encrypt(value);
-        }
+        [BsonElement("Username")]
+        public string Username { get; set; }
 
         /// <summary>
         /// Password of the user
         /// </summary>
-        [BsonIgnore]
-        public string Password
-        {
-            get => CipherHandler.Decrypt(_password);
-            set => _password = CipherHandler.Encrypt(value);
-        }
+        [BsonElement("Password")]
+        public string Password { get; set; }
+
+        /// <summary>
+        /// SummonerLevel of the user
+        /// </summary>
+        [BsonElement("SummonerLevel")]
+        public int SummonerLevel { get; set; }
+        
+        /// <summary>
+        /// SummonerId of the user
+        /// </summary>
+        [BsonElement("SummonerId")]
+        public string SummonerId { get; set; }
+        
+        /// <summary>
+        /// Unique id of the user
+        /// </summary>
+        [BsonElement("UniqueId")]
+        public string UniqueId { get; set; }
+        
+        /// <summary>
+        /// League tier of the user
+        /// </summary>
+        [BsonElement("LeagueTier")]
+        public string LeagueTier { get; set; }
+        
+        /// <summary>
+        /// League rank of the user
+        /// </summary>
+        [BsonElement("LeagueRank")]
+        public string LeagueRank { get; set; }
     }
 }
