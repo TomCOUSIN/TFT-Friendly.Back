@@ -115,7 +115,7 @@ namespace TFT_Friendly.Back.Bootstrap
             
             services.AddScoped<IUserService, UserService>();
             services.AddSingleton<UsersContext>();
-            services.AddSingleton<LeagueOfLegendsClient>();
+            services.AddSingleton<TftClient>();
         }
 
         #endregion CONFIGURE_SERVICES

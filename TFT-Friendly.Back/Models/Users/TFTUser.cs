@@ -5,7 +5,7 @@ namespace TFT_Friendly.Back.Models.Users
     /// <summary>
     /// LeagueOfLegendsUser class
     /// </summary>
-    public class LeagueOfLegendsUser
+    public class TftUser
     {
         /// <summary>
         /// Id of League of legends user

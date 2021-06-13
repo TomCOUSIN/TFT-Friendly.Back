@@ -23,7 +23,7 @@ namespace TFT_Friendly.Back.Services.Users
 
         private readonly JwtConfiguration _configuration;
         private readonly UsersContext _usersContext;
-        private readonly LeagueOfLegendsClient _client;
+        private readonly TftClient _client;
 
         #endregion MEMBERS
 
@@ -36,7 +36,7 @@ namespace TFT_Friendly.Back.Services.Users
         /// <param name="usersContext">The context to use</param>
         /// <param name="client">The client to retrieve user information from League Of Legends API</param>
         /// <exception cref="ArgumentNullException">Throw an exception if on parameter is null</exception>
-        public UserService(IOptions<JwtConfiguration> configuration, UsersContext usersContext, LeagueOfLegendsClient client)
+        public UserService(IOptions<JwtConfiguration> configuration, UsersContext usersContext, TftClient client)
         {
             _configuration = configuration.Value ?? throw new ArgumentNullException(nameof(configuration));
             _usersContext = usersContext ?? throw new ArgumentNullException(nameof(usersContext));
@@ -119,8 +119,13 @@ namespace TFT_Friendly.Back.Services.Users
             VerifyPassword(user.Password);
             
             var userInformation = await _client.GetUserInformation(user.Username).ConfigureAwait(false);
-            user.LeagueId = userInformation.Puuid;
+            user.SummonerId = userInformation.Id;
+            user.UniqueId = userInformation.Puuid;
             user.SummonerLevel = userInformation.SummonerLevel;
+
+            var userLeaguesInformation = await _client.GetUserLeagueInformation(user.SummonerId).ConfigureAwait(false);
+            user.LeagueTier = userLeaguesInformation[0].Tier;
+            user.LeagueRank = userLeaguesInformation[0].Rank;
 
             _usersContext.InsertOne(user);
             return AuthenticateUser(user);

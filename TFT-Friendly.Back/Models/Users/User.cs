@@ -34,9 +34,27 @@ namespace TFT_Friendly.Back.Models.Users
         public int SummonerLevel { get; set; }
         
         /// <summary>
-        /// Unique LeagueId of the user
+        /// SummonerId of the user
         /// </summary>
-        [BsonElement("LeagueId")]
-        public string LeagueId { get; set; }
+        [BsonElement("SummonerId")]
+        public string SummonerId { get; set; }
+        
+        /// <summary>
+        /// Unique id of the user
+        /// </summary>
+        [BsonElement("UniqueId")]
+        public string UniqueId { get; set; }
+        
+        /// <summary>
+        /// League tier of the user
+        /// </summary>
+        [BsonElement("LeagueTier")]
+        public string LeagueTier { get; set; }
+        
+        /// <summary>
+        /// League rank of the user
+        /// </summary>
+        [BsonElement("LeagueRank")]
+        public string LeagueRank { get; set; }
     }
 }
