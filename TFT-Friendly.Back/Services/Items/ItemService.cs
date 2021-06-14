@@ -19,6 +19,11 @@ namespace TFT_Friendly.Back.Services.Items
 
         #region CONSTRUCTOR
 
+        /// <summary>
+        /// Initialize a new <see cref="ItemService"/> class
+        /// </summary>
+        /// <param name="context">The context of the item database</param>
+        /// <exception cref="ArgumentNullException">Throw an exception if one parameter is null</exception>
         public ItemService(ItemsContext context)
         {
             _items = context ?? throw new ArgumentNullException(nameof(context));

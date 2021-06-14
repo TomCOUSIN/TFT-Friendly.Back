@@ -117,6 +117,7 @@ namespace TFT_Friendly.Back.Bootstrap
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IItemService, ItemService>();
             services.AddSingleton<UsersContext>();
+            services.AddSingleton<ItemsContext>();
             services.AddSingleton<TftClient>();
         }
 
