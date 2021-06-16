@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using TFT_Friendly.Back.Exceptions;
 using TFT_Friendly.Back.Models.Errors;
 using TFT_Friendly.Back.Models.Items;
@@ -20,6 +21,7 @@ namespace TFT_Friendly.Back.Controllers
         #region MEMBERS
 
         private readonly IItemService _itemService;
+        private readonly ILogger<ItemsController> _logger;
 
         #endregion MEMBERS
 
@@ -29,10 +31,12 @@ namespace TFT_Friendly.Back.Controllers
         /// Initialize a new <see cref="ItemsController"/> class
         /// </summary>
         /// <param name="itemService">The item service to use</param>
+        /// <param name="logger">The logger to use</param>
         /// <exception cref="ArgumentNullException">Throw an exception if on parameter is null</exception>
-        public ItemsController(IItemService itemService)
+        public ItemsController(IItemService itemService, ILogger<ItemsController> logger)
         {
             _itemService = itemService ?? throw new ArgumentNullException(nameof(itemService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         #endregion CONSTRUCTOR
@@ -52,24 +56,29 @@ namespace TFT_Friendly.Back.Controllers
         }
 
         /// <summary>
-        /// Add a new item
+        /// Add a list of new item
         /// </summary>
-        /// <returns>The newly added item</returns>
+        /// <returns>The newly added items</returns>
         /// <response code="200">Everything worked well</response>
-        /// <response code="409">An item with this ItemId already exist</response>
-        [ProducesResponseType(typeof(Item), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Item), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(List<Item>), StatusCodes.Status200OK)]
         [HttpPost]
-        public IActionResult AddNewItem(Item item)
+        public IActionResult AddNewItems(List<Item> items)
         {
-            try
+            var addedItems = new List<Item>();
+                
+            foreach (var item in items)
             {
-                return Ok(_itemService.AddItem(item));
+                try
+                {
+                    var addedItem = _itemService.AddItem(item);
+                    addedItems.Add(addedItem);
+                }
+                catch (ItemConflictException exception)
+                {
+                    _logger.LogError(exception.Message);
+                }
             }
-            catch (ItemConflictException exception)
-            {
-                return Conflict(new HttpError(StatusCodes.Status409Conflict, exception.Message));
-            }
+            return Ok(addedItems);
         }
 
         /// <summary>
