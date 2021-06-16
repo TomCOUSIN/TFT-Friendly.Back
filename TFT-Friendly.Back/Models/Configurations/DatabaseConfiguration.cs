@@ -10,6 +10,8 @@ namespace TFT_Friendly.Back.Models.Configurations
     {
         public string UsersCollectionName { get; set; }
         
+        public string ItemsCollectionName { get; set; }
+        
         public string ConnectionString { get; set; }
         
         public string DatabaseName { get; set; }
@@ -19,6 +21,7 @@ namespace TFT_Friendly.Back.Models.Configurations
         public void Configure(DatabaseConfiguration options)
         {
             UsersCollectionName = options.UsersCollectionName ?? throw new ArgumentNullException(nameof(options));
+            ItemsCollectionName = options.ItemsCollectionName ?? throw new ArgumentNullException(nameof(options));
             ConnectionString = options.ConnectionString ?? throw new ArgumentNullException(nameof(options));
             DatabaseName = options.DatabaseName ?? throw new ArgumentNullException(nameof(options));
         }

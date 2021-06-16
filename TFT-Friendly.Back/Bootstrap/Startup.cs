@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using TFT_Friendly.Back.Clients;
 using TFT_Friendly.Back.Middlewares;
 using TFT_Friendly.Back.Models.Configurations;
+using TFT_Friendly.Back.Services.Items;
 using TFT_Friendly.Back.Services.Mongo;
 using TFT_Friendly.Back.Services.Users;
 
@@ -114,7 +115,9 @@ namespace TFT_Friendly.Back.Bootstrap
             });
             
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IItemService, ItemService>();
             services.AddSingleton<UsersContext>();
+            services.AddSingleton<ItemsContext>();
             services.AddSingleton<TftClient>();
         }
 
