@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -44,5 +45,11 @@ namespace TFT_Friendly.Back.Models.Items
         /// </summary>
         [BsonElement("IsShadow")]
         public bool IsShadow { get; set; }
+        
+        /// <summary>
+        /// Components of the item
+        /// </summary>
+        [BsonElement("Components")]
+        public List<int> Components { get; set; }
     }
 }
