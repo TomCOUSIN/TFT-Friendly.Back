@@ -10,14 +10,14 @@ namespace TFT_Friendly.Back.Services.Items
     {
         List<Item> GetItemList();
         
-        Item GetItem(int itemId);
+        Item GetItem(string key);
 
         Item AddItem(Item item);
         
         Item UpdateItem(Item item);
         
-        Item UpdateItem(int itemId, Item item);
+        Item UpdateItem(string key, Item item);
 
-        void DeleteItem(int itemId);
+        void DeleteItem(string key);
     }
 }

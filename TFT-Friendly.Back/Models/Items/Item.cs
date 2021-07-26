@@ -29,6 +29,12 @@ namespace TFT_Friendly.Back.Models.Items
         public string Name { get; set; }
         
         /// <summary>
+        /// Key of the item
+        /// </summary>
+        [BsonElement("Key")]
+        public string Key { get; set; }
+        
+        /// <summary>
         /// Description of the item
         /// </summary>
         [BsonElement("Description")]

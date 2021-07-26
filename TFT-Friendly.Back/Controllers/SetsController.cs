@@ -5,22 +5,22 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TFT_Friendly.Back.Exceptions;
 using TFT_Friendly.Back.Models.Errors;
-using TFT_Friendly.Back.Models.Items;
-using TFT_Friendly.Back.Services.Items;
+using TFT_Friendly.Back.Models.Sets;
+using TFT_Friendly.Back.Services.Sets;
 
 namespace TFT_Friendly.Back.Controllers
 {
     /// <summary>
-    /// ItemsController class
+    /// SetsController class
     /// </summary>
     [Produces("application/json")]
     [Route("[controller]")]
     [ApiController]
-    public class ItemsController : ControllerBase
+    public class SetsController : ControllerBase
     {
         #region MEMBERS
 
-        private readonly IItemService _itemService;
+        private readonly ISetService _setsService;
         private readonly ILogger<ItemsController> _logger;
 
         #endregion MEMBERS
@@ -28,14 +28,14 @@ namespace TFT_Friendly.Back.Controllers
         #region CONSTRUCTOR
 
         /// <summary>
-        /// Initialize a new <see cref="ItemsController"/> class
+        /// Initialize a new <see cref="SetsController"/> class
         /// </summary>
-        /// <param name="itemService">The item service to use</param>
+        /// <param name="setService">The set service to use</param>
         /// <param name="logger">The logger to use</param>
         /// <exception cref="ArgumentNullException">Throw an exception if on parameter is null</exception>
-        public ItemsController(IItemService itemService, ILogger<ItemsController> logger)
+        public SetsController(ISetService setService, ILogger<ItemsController> logger)
         {
-            _itemService = itemService ?? throw new ArgumentNullException(nameof(itemService));
+            _setsService = setService ?? throw new ArgumentNullException(nameof(setService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -44,58 +44,59 @@ namespace TFT_Friendly.Back.Controllers
         #region ROUTES
 
         /// <summary>
-        /// Get the list of items
+        /// Get the list of sets
         /// </summary>
-        /// <returns>The list of items</returns>
+        /// <returns>The list of sets</returns>
         /// <response code="200">Everything worked well</response>
-        [ProducesResponseType(typeof(List<Item>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<Set>), StatusCodes.Status200OK)]
         [HttpGet]
-        public IActionResult GetItemList()
+        public IActionResult GetSetList()
         {
-            return Ok(_itemService.GetItemList());
+            return Ok(_setsService.GetSetList());
         }
 
         /// <summary>
-        /// Add a list of new item
+        /// Add a list of new set
         /// </summary>
-        /// <returns>The newly added items</returns>
+        /// <returns>The newly added sets</returns>
         /// <response code="200">Everything worked well</response>
-        [ProducesResponseType(typeof(List<Item>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<Set>), StatusCodes.Status200OK)]
         [HttpPost]
-        public IActionResult AddNewItems(List<Item> items)
+        public IActionResult AddNewSets(List<Set> sets)
         {
-            var addedItems = new List<Item>();
-                
-            foreach (var item in items)
+            var addedSets = new List<Set>();
+
+            foreach (var set in sets)
             {
                 try
                 {
-                    var addedItem = _itemService.AddItem(item);
-                    addedItems.Add(addedItem);
+                    var addedSet = _setsService.AddSet(set);
+                    addedSets.Add(addedSet);
                 }
-                catch (ItemConflictException exception)
+                catch (SetConflictException exception)
                 {
                     _logger.LogError(exception.Message);
                 }
             }
-            return Ok(addedItems);
+
+            return Ok(addedSets);
         }
 
         /// <summary>
-        /// Get a specific item
+        /// Get a specific set
         /// </summary>
-        /// <param name="key">The key of the item to get</param>
-        /// <returns>The requested item</returns>
+        /// <param name="key">The key of the set to get</param>
+        /// <returns>The requested set</returns>
         /// <response code="200">Everything worked well</response>
         /// <response code="404">Item not found</response>
-        [ProducesResponseType(typeof(Item), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Set), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(HttpError), StatusCodes.Status404NotFound)]
         [HttpGet("{key}")]
-        public IActionResult GetItem(string key)
+        public IActionResult GetSet(string key)
         {
             try
             {
-                return Ok(_itemService.GetItem(key));
+                return Ok(_setsService.GetSet(key));
             }
             catch (ItemNotFoundException exception)
             {
@@ -104,51 +105,51 @@ namespace TFT_Friendly.Back.Controllers
         }
 
         /// <summary>
-        /// Update an item
+        /// Update a set
         /// </summary>
-        /// <param name="key">The key of the item to update</param>
-        /// <param name="item">The item to update</param>
-        /// <returns>The updated item</returns>
+        /// <param name="key">The key of the set to update</param>
+        /// <param name="item">The set to update</param>
+        /// <returns>The updated set</returns>
         /// <response code="200">Everything worked well</response>
         /// <response code="404">Item not found</response>
-        [ProducesResponseType(typeof(Item), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Set), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(HttpError), StatusCodes.Status404NotFound)]
         [HttpPatch("{key}")]
-        public IActionResult UpdateItem(string key, Item item)
+        public IActionResult UpdateSet(string key, Set set)
         {
             try
             {
-                return Ok(_itemService.UpdateItem(key, item));
+                return Ok(_setsService.UpdateSet(key, set));
             }
-            catch (ItemNotFoundException exception)
+            catch (SetNotFoundException exception)
             {
                 return NotFound(new HttpError(StatusCodes.Status404NotFound, exception.Message));
             }
         }
-        
+
         /// <summary>
-        /// Delete an item
+        /// Delete a set
         /// </summary>
-        /// <param name="key">The key of the item to delete</param>
+        /// <param name="key">The key of the set to delete</param>
         /// <returns>Nothing</returns>
         /// <response code="200">Everything worked well</response>
         /// <response code="404">Item not found</response>
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(HttpError), StatusCodes.Status404NotFound)]
         [HttpDelete("{key}")]
-        public IActionResult DeleteItem(string key)
+        public IActionResult DeleteSet(string key)
         {
             try
             {
-                _itemService.DeleteItem(key);
+                _setsService.DeleteSet(key);
                 return Ok();
             }
-            catch (ItemNotFoundException exception)
+            catch (SetNotFoundException exception)
             {
                 return NotFound(new HttpError(StatusCodes.Status404NotFound, exception.Message));
             }
         }
-        
+
         #endregion ROUTES
     }
 }
