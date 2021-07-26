@@ -47,6 +47,12 @@ namespace TFT_Friendly.Back.Models.Items
         public bool IsShadow { get; set; }
         
         /// <summary>
+        /// Boolean field to specify if the item is radiant
+        /// </summary>
+        [BsonElement("IsRadiant")]
+        public bool IsRadiant { get; set; }
+        
+        /// <summary>
         /// Components of the item
         /// </summary>
         [BsonElement("Components")]
