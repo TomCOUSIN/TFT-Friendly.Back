@@ -16,6 +16,8 @@ namespace TFT_Friendly.Back.Models.Configurations
         
         public string ChampionsCollectionName { get; set; }
         
+        public string SetsCollectionName { get; set; }
+        
         public string ConnectionString { get; set; }
         
         public string DatabaseName { get; set; }
@@ -28,6 +30,7 @@ namespace TFT_Friendly.Back.Models.Configurations
             ItemsCollectionName = options.ItemsCollectionName ?? throw new ArgumentNullException(nameof(options));
             TraitsCollectionName = options.TraitsCollectionName ?? throw new ArgumentNullException(nameof(options));
             ChampionsCollectionName = options.ChampionsCollectionName ?? throw new ArgumentNullException(nameof(options));
+            SetsCollectionName = options.SetsCollectionName ?? throw new ArgumentNullException(nameof(options));
             ConnectionString = options.ConnectionString ?? throw new ArgumentNullException(nameof(options));
             DatabaseName = options.DatabaseName ?? throw new ArgumentNullException(nameof(options));
         }

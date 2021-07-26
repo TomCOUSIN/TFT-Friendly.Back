@@ -84,17 +84,18 @@ namespace TFT_Friendly.Back.Controllers
         /// <summary>
         /// Get a specific item
         /// </summary>
+        /// <param name="key">The key of the item to get</param>
         /// <returns>The requested item</returns>
         /// <response code="200">Everything worked well</response>
         /// <response code="404">Item not found</response>
         [ProducesResponseType(typeof(Item), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(HttpError), StatusCodes.Status404NotFound)]
-        [HttpGet("{itemId:int}")]
-        public IActionResult GetItem(int itemId)
+        [HttpGet("{key}")]
+        public IActionResult GetItem(string key)
         {
             try
             {
-                return Ok(_itemService.GetItem(itemId));
+                return Ok(_itemService.GetItem(key));
             }
             catch (ItemNotFoundException exception)
             {
@@ -105,19 +106,19 @@ namespace TFT_Friendly.Back.Controllers
         /// <summary>
         /// Update an item
         /// </summary>
-        /// <param name="itemId">The id of the item to update</param>
+        /// <param name="key">The key of the item to update</param>
         /// <param name="item">The item to update</param>
         /// <returns>The updated item</returns>
         /// <response code="200">Everything worked well</response>
         /// <response code="404">Item not found</response>
         [ProducesResponseType(typeof(Item), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(HttpError), StatusCodes.Status404NotFound)]
-        [HttpPatch("{itemId:int}")]
-        public IActionResult UpdateItem(int itemId, Item item)
+        [HttpPatch("{key}")]
+        public IActionResult UpdateItem(string key, Item item)
         {
             try
             {
-                return Ok(_itemService.UpdateItem(itemId, item));
+                return Ok(_itemService.UpdateItem(key, item));
             }
             catch (ItemNotFoundException exception)
             {
@@ -128,18 +129,18 @@ namespace TFT_Friendly.Back.Controllers
         /// <summary>
         /// Delete an item
         /// </summary>
-        /// <param name="itemId">The if of the item to delete</param>
+        /// <param name="key">The key of the item to delete</param>
         /// <returns>Nothing</returns>
         /// <response code="200">Everything worked well</response>
         /// <response code="404">Item not found</response>
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(HttpError), StatusCodes.Status404NotFound)]
-        [HttpDelete("{itemId:int}")]
-        public IActionResult DeleteItem(int itemId)
+        [HttpDelete("{key}")]
+        public IActionResult DeleteItem(string key)
         {
             try
             {
-                _itemService.DeleteItem(itemId);
+                _itemService.DeleteItem(key);
                 return Ok();
             }
             catch (ItemNotFoundException exception)

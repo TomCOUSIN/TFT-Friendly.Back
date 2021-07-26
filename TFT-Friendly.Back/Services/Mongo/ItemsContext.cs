@@ -35,11 +35,11 @@ namespace TFT_Friendly.Back.Services.Mongo
         /// <summary>
         /// Verify if an item exist
         /// </summary>
-        /// <param name="itemId">The id of the item to verify</param>
+        /// <param name="key">The key of the item to verify</param>
         /// <returns>True if exist, false otherwise</returns>
-        public bool IsItemExist(int itemId)
+        public bool IsItemExist(string key)
         {
-            var item = _items.Find(i => i.ItemId == itemId).FirstOrDefault();
+            var item = _items.Find(i => i.Key == key).FirstOrDefault();
             return item != null;
         }
 
@@ -55,11 +55,11 @@ namespace TFT_Friendly.Back.Services.Mongo
         /// <summary>
         /// Get a specific item
         /// </summary>
-        /// <param name="itemId">The id of the item</param>
+        /// <param name="key">The key of the item</param>
         /// <returns>The item related to the id</returns>
-        public Item GetItem(int itemId)
+        public Item GetItem(string key)
         {
-            return _items.Find(i => i.ItemId == itemId).FirstOrDefault();
+            return _items.Find(i => i.Key == key).FirstOrDefault();
         }
 
         /// <summary>
@@ -99,12 +99,12 @@ namespace TFT_Friendly.Back.Services.Mongo
         /// <summary>
         /// Update a specific item
         /// </summary>
-        /// <param name="itemId">The id of the item to update</param>
+        /// <param name="key">The key of the item to update</param>
         /// <param name="item">The item to update</param>
         /// <returns>The newly updated item</returns>
-        public Item UpdateItem(int itemId, Item item)
+        public Item UpdateItem(string key, Item item)
         {
-            var filter = Builders<Item>.Filter.Eq("ItemId", itemId);
+            var filter = Builders<Item>.Filter.Eq("Key", key);
             _items.ReplaceOne(filter, item);
             return item;
         }
@@ -112,10 +112,10 @@ namespace TFT_Friendly.Back.Services.Mongo
         /// <summary>
         /// Delete an item
         /// </summary>
-        /// <param name="itemId">The id of the item to delete</param>
-        public void DeleteItem(int itemId)
+        /// <param name="key">The key of the item to delete</param>
+        public void DeleteItem(string key)
         {
-            _items.DeleteOne(i => i.ItemId == itemId);
+            _items.DeleteOne(i => i.Key == key);
         }
 
         #endregion METHODS
