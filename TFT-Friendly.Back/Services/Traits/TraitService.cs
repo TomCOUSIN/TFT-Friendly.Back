@@ -74,7 +74,7 @@ namespace TFT_Friendly.Back.Services.Traits
         /// </summary>
         /// <param name="trait">The trait to update</param>
         /// <returns>The updated trait</returns>
-        /// <exception cref="ItemNotFoundException">Throw an exception if the trait doesn't exist</exception>
+        /// <exception cref="TraitNotFoundException">Throw an exception if the trait doesn't exist</exception>
         public Trait UpdateTrait(Trait trait)
         {
             if (!_traitsContext.IsTraitExist(trait.Key))
