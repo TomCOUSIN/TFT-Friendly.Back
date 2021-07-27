@@ -53,7 +53,7 @@ namespace TFT_Friendly.Back.Services.Items
         public Item GetItem(string key)
         {
             if (!_items.IsEntityExists(key))
-                throw new ItemNotFoundException("Item not found");
+                throw new EntityNotFoundException("Item not found");
             return _items.GetEntity(key);
         }
 
@@ -66,7 +66,7 @@ namespace TFT_Friendly.Back.Services.Items
         public Item AddItem(Item item)
         {
             if (_items.IsEntityExists(item.Key))
-                throw new ItemConflictException("An item with this ItemId already exist");
+                throw new EntityConflictException("An item with this ItemId already exist");
             return _items.AddEntity(item);
         }
 
@@ -79,7 +79,7 @@ namespace TFT_Friendly.Back.Services.Items
         public Item UpdateItem(Item item)
         {
             if (!_items.IsEntityExists(item.Key))
-                throw new ItemNotFoundException("Item not found");
+                throw new EntityNotFoundException("Item not found");
             return _items.UpdateEntity(item.Key, item);
         }
         
@@ -93,7 +93,7 @@ namespace TFT_Friendly.Back.Services.Items
         public Item UpdateItem(string key, Item item)
         {
             if (!_items.IsEntityExists(key))
-                throw new ItemNotFoundException("Item not found");
+                throw new EntityNotFoundException("Item not found");
             return _items.UpdateEntity(key, item);
         }
 
@@ -105,7 +105,7 @@ namespace TFT_Friendly.Back.Services.Items
         public void DeleteItem(string key)
         {
             if (!_items.IsEntityExists(key))
-                throw new ItemNotFoundException("Item not found");
+                throw new EntityNotFoundException("Item not found");
             _items.DeleteEntity(key);
         }
 

@@ -73,7 +73,7 @@ namespace TFT_Friendly.Back.Controllers
                     var addedItem = _itemService.AddItem(item);
                     addedItems.Add(addedItem);
                 }
-                catch (ItemConflictException exception)
+                catch (EntityConflictException exception)
                 {
                     _logger.LogError(exception.Message);
                 }
@@ -97,7 +97,7 @@ namespace TFT_Friendly.Back.Controllers
             {
                 return Ok(_itemService.GetItem(key));
             }
-            catch (ItemNotFoundException exception)
+            catch (EntityNotFoundException exception)
             {
                 return NotFound(new HttpError(StatusCodes.Status404NotFound, exception.Message));
             }
@@ -120,7 +120,7 @@ namespace TFT_Friendly.Back.Controllers
             {
                 return Ok(_itemService.UpdateItem(key, item));
             }
-            catch (ItemNotFoundException exception)
+            catch (EntityNotFoundException exception)
             {
                 return NotFound(new HttpError(StatusCodes.Status404NotFound, exception.Message));
             }
@@ -143,7 +143,7 @@ namespace TFT_Friendly.Back.Controllers
                 _itemService.DeleteItem(key);
                 return Ok();
             }
-            catch (ItemNotFoundException exception)
+            catch (EntityNotFoundException exception)
             {
                 return NotFound(new HttpError(StatusCodes.Status404NotFound, exception.Message));
             }

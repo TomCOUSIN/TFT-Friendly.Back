@@ -53,7 +53,7 @@ namespace TFT_Friendly.Back.Services.Champions
         public Champion GetChampion(string key)
         {
             if (!_championsContext.IsEntityExists(key))
-                throw new ChampionNotFoundException("Champion not found");
+                throw new EntityNotFoundException("Champion not found");
             return _championsContext.GetEntity(key);
         }
 
@@ -66,7 +66,7 @@ namespace TFT_Friendly.Back.Services.Champions
         public Champion AddChampion(Champion champion)
         {
             if (_championsContext.IsEntityExists(champion.Key))
-                throw new ChampionConflictException("A champion with this key already exist");
+                throw new EntityConflictException("A champion with this key already exist");
             return _championsContext.AddEntity(champion);
         }
 
@@ -79,7 +79,7 @@ namespace TFT_Friendly.Back.Services.Champions
         public Champion UpdateChampion(Champion champion)
         {
             if (!_championsContext.IsEntityExists(champion.Key))
-                throw new ChampionNotFoundException("Champion not found");
+                throw new EntityNotFoundException("Champion not found");
             return _championsContext.UpdateEntity(champion.Key, champion);
         }
         
@@ -93,7 +93,7 @@ namespace TFT_Friendly.Back.Services.Champions
         public Champion UpdateChampion(string key, Champion champion)
         {
             if (!_championsContext.IsEntityExists(key))
-                throw new ChampionNotFoundException("Champion not found");
+                throw new EntityNotFoundException("Champion not found");
             return _championsContext.UpdateEntity(key, champion);
         }
 
@@ -105,7 +105,7 @@ namespace TFT_Friendly.Back.Services.Champions
         public void DeleteChampion(string key)
         {
             if (!_championsContext.IsEntityExists(key))
-                throw new ChampionNotFoundException("Champion not found");
+                throw new EntityNotFoundException("Champion not found");
             _championsContext.DeleteEntity(key);
         }
 

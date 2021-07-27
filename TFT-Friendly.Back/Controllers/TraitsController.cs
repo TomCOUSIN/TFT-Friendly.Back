@@ -74,7 +74,7 @@ namespace TFT_Friendly.Back.Controllers
                     var addedTrait = _traitService.AddTrait(trait);
                     addedTraits.Add(addedTrait);
                 }
-                catch (TraitConflictException exception)
+                catch (EntityConflictException exception)
                 {
                     _logger.LogError(exception.Message);
                 }
@@ -97,7 +97,7 @@ namespace TFT_Friendly.Back.Controllers
             {
                 return Ok(_traitService.GetTrait(key));
             }
-            catch (TraitNotFoundException exception)
+            catch (EntityNotFoundException exception)
             {
                 return NotFound(new HttpError(StatusCodes.Status404NotFound, exception.Message));
             }
@@ -120,7 +120,7 @@ namespace TFT_Friendly.Back.Controllers
             {
                 return Ok(_traitService.UpdateTrait(key, trait));
             }
-            catch (TraitNotFoundException exception)
+            catch (EntityNotFoundException exception)
             {
                 return NotFound(new HttpError(StatusCodes.Status404NotFound, exception.Message));
             }
@@ -143,7 +143,7 @@ namespace TFT_Friendly.Back.Controllers
                 _traitService.DeleteTrait(key);
                 return Ok();
             }
-            catch (TraitNotFoundException exception)
+            catch (EntityNotFoundException exception)
             {
                 return NotFound(new HttpError(StatusCodes.Status404NotFound, exception.Message));
             }

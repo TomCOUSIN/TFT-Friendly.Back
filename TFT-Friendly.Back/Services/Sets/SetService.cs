@@ -53,7 +53,7 @@ namespace TFT_Friendly.Back.Services.Sets
         public Set GetSet(string key)
         {
             if (!_setsContext.IsEntityExists(key))
-                throw new SetNotFoundException("Set not found");
+                throw new EntityNotFoundException("Set not found");
             return _setsContext.GetEntity(key);
         }
 
@@ -66,7 +66,7 @@ namespace TFT_Friendly.Back.Services.Sets
         public Set AddSet(Set set)
         {
             if (_setsContext.IsEntityExists(set.Key))
-                throw new SetConflictException("A set with this key already exist");
+                throw new EntityConflictException("A set with this key already exist");
             return _setsContext.AddEntity(set);
         }
 
@@ -79,7 +79,7 @@ namespace TFT_Friendly.Back.Services.Sets
         public Set UpdateSet(Set set)
         {
             if (!_setsContext.IsEntityExists(set.Key))
-                throw new SetNotFoundException("Set not found");
+                throw new EntityNotFoundException("Set not found");
             return _setsContext.UpdateEntity(set.Key, set);
         }
 
@@ -93,7 +93,7 @@ namespace TFT_Friendly.Back.Services.Sets
         public Set UpdateSet(string key, Set set)
         {
             if (!_setsContext.IsEntityExists(key))
-                throw new SetNotFoundException("Set not found");
+                throw new EntityNotFoundException("Set not found");
             return _setsContext.UpdateEntity(key, set);
         }
 
@@ -105,7 +105,7 @@ namespace TFT_Friendly.Back.Services.Sets
         public void DeleteSet(string key)
         {
             if (!_setsContext.IsEntityExists(key))
-                throw new SetNotFoundException("Set not found");
+                throw new EntityNotFoundException("Set not found");
             _setsContext.DeleteEntity(key);
         }
 

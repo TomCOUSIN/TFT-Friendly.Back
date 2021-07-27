@@ -54,7 +54,7 @@ namespace TFT_Friendly.Back.Services.Traits
         public Trait GetTrait(string key)
         {
             if (!_traitsContext.IsEntityExists(key))
-                throw new TraitNotFoundException("Trait not found");
+                throw new EntityNotFoundException("Trait not found");
             return _traitsContext.GetEntity(key);
         }
 
@@ -67,7 +67,7 @@ namespace TFT_Friendly.Back.Services.Traits
         public Trait AddTrait(Trait trait)
         {
             if (_traitsContext.IsEntityExists(trait.Key))
-                throw new TraitConflictException("A trait with this key already exist");
+                throw new EntityConflictException("A trait with this key already exist");
             return _traitsContext.AddEntity(trait);
         }
 
@@ -80,7 +80,7 @@ namespace TFT_Friendly.Back.Services.Traits
         public Trait UpdateTrait(Trait trait)
         {
             if (!_traitsContext.IsEntityExists(trait.Key))
-                throw new TraitNotFoundException("Trait not found");
+                throw new EntityNotFoundException("Trait not found");
             return _traitsContext.UpdateEntity(trait.Key, trait);
         }
         
@@ -94,7 +94,7 @@ namespace TFT_Friendly.Back.Services.Traits
         public Trait UpdateTrait(string key, Trait trait)
         {
             if (!_traitsContext.IsEntityExists(key))
-                throw new TraitNotFoundException("Trait not found");
+                throw new EntityNotFoundException("Trait not found");
             return _traitsContext.UpdateEntity(key, trait);
         }
 
@@ -106,7 +106,7 @@ namespace TFT_Friendly.Back.Services.Traits
         public void DeleteTrait(string key)
         {
             if (!_traitsContext.IsEntityExists(key))
-                throw new TraitNotFoundException("Trait not found");
+                throw new EntityNotFoundException("Trait not found");
             _traitsContext.DeleteEntity(key);
         }
 
