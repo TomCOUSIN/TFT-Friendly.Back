@@ -43,13 +43,24 @@ namespace TFT_Friendly.Back.Services.Updates
         public long RegisterUpdate(List<string> updates)
         {
             var currentUpdates = _context.GetEntities();
-            var newUpdate = _context.AddEntity(new Update
+            if (currentUpdates.Count > 0)
             {
-                Updates = updates,
-                Identifier = currentUpdates.Last().Identifier + 1,
-                Key = (currentUpdates.Last().Identifier + 1).ToString()
-            });
-            return newUpdate.Identifier;
+                return _context.AddEntity(new Update
+                {
+                    Updates = updates,
+                    Identifier = currentUpdates.Last().Identifier + 1,
+                    Key = (currentUpdates.Last().Identifier + 1).ToString()
+                }).Identifier;
+            }
+            else
+            {
+                return _context.AddEntity(new Update
+                {
+                    Updates = updates,
+                    Identifier = 0,
+                    Key = "0"
+                }).Identifier;
+            }
         }
 
         /// <summary>
@@ -59,7 +70,7 @@ namespace TFT_Friendly.Back.Services.Updates
         public long GetLastUpdateIdentifier()
         {
             var updates = _context.GetEntities();
-            return updates.Last().Identifier;
+            return updates.Count > 0 ? updates.Last().Identifier : 0;
         }
 
         /// <summary>
@@ -97,6 +108,18 @@ namespace TFT_Friendly.Back.Services.Updates
             if (!_context.IsEntityExists(identifier.ToString()))
                 throw new EntityNotFoundException("This Updates doesn't exists.");
             return _context.GetEntity(identifier.ToString());
+        }
+
+        /// <summary>
+        /// Delete an update
+        /// </summary>
+        /// <param name="identifier">The identifier of the update to delete</param>
+        /// <exception cref="EntityNotFoundException">Throw an exception if the update doesn't exists</exception>
+        public void DeleteUpdate(long identifier)
+        {
+            if (!_context.IsEntityExists(identifier.ToString()))
+                throw new EntityNotFoundException("This Updates doesn't exists.");
+            _context.DeleteEntity(identifier.ToString());
         }
 
         #endregion METHODS
