@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 using TFT_Friendly.Back.Exceptions;
+using TFT_Friendly.Back.Models.Configurations;
+using TFT_Friendly.Back.Models.Database;
 using TFT_Friendly.Back.Models.Items;
 using TFT_Friendly.Back.Services.Mongo;
 
@@ -13,7 +16,7 @@ namespace TFT_Friendly.Back.Services.Items
     {
         #region MEMBERS
 
-        private readonly ItemsContext _items;
+        private readonly EntityContext<Item> _items;
 
         #endregion MEMBERS
 
@@ -22,11 +25,10 @@ namespace TFT_Friendly.Back.Services.Items
         /// <summary>
         /// Initialize a new <see cref="ItemService"/> class
         /// </summary>
-        /// <param name="context">The context of the item database</param>
-        /// <exception cref="ArgumentNullException">Throw an exception if one parameter is null</exception>
-        public ItemService(ItemsContext context)
+        /// <param name="configuration">The database configuration to use</param>
+        public ItemService(IOptions<DatabaseConfiguration> configuration)
         {
-            _items = context ?? throw new ArgumentNullException(nameof(context));
+            _items = new EntityContext<Item>(Currentdb.Items, configuration);
         }
 
         #endregion CONSTRUCTOR
@@ -39,7 +41,7 @@ namespace TFT_Friendly.Back.Services.Items
         /// <returns>The list of items</returns>
         public List<Item> GetItemList()
         {
-            return _items.GetItems();
+            return _items.GetEntities();
         }
 
         /// <summary>
@@ -50,9 +52,9 @@ namespace TFT_Friendly.Back.Services.Items
         /// <exception cref="ItemNotFoundException">Throw an exception if item doesn't exist</exception>
         public Item GetItem(string key)
         {
-            if (!_items.IsItemExist(key))
+            if (!_items.IsEntityExists(key))
                 throw new ItemNotFoundException("Item not found");
-            return _items.GetItem(key);
+            return _items.GetEntity(key);
         }
 
         /// <summary>
@@ -63,9 +65,9 @@ namespace TFT_Friendly.Back.Services.Items
         /// <exception cref="ItemConflictException">Throw an exception if an item with the same id already exist</exception>
         public Item AddItem(Item item)
         {
-            if (_items.IsItemExist(item.Key))
+            if (_items.IsEntityExists(item.Key))
                 throw new ItemConflictException("An item with this ItemId already exist");
-            return _items.AddItem(item);
+            return _items.AddEntity(item);
         }
 
         /// <summary>
@@ -76,9 +78,9 @@ namespace TFT_Friendly.Back.Services.Items
         /// <exception cref="ItemNotFoundException">Throw an exception if the item doesn't exist</exception>
         public Item UpdateItem(Item item)
         {
-            if (!_items.IsItemExist(item.Key))
+            if (!_items.IsEntityExists(item.Key))
                 throw new ItemNotFoundException("Item not found");
-            return _items.UpdateItem(item);
+            return _items.UpdateEntity(item.Key, item);
         }
         
         /// <summary>
@@ -90,9 +92,9 @@ namespace TFT_Friendly.Back.Services.Items
         /// <exception cref="ItemNotFoundException">Throw an exception if the item doesn't exist</exception>
         public Item UpdateItem(string key, Item item)
         {
-            if (!_items.IsItemExist(key))
+            if (!_items.IsEntityExists(key))
                 throw new ItemNotFoundException("Item not found");
-            return _items.UpdateItem(key, item);
+            return _items.UpdateEntity(key, item);
         }
 
         /// <summary>
@@ -102,9 +104,9 @@ namespace TFT_Friendly.Back.Services.Items
         /// <exception cref="ItemNotFoundException">Throw an exception if the item doesn't exist</exception>
         public void DeleteItem(string key)
         {
-            if (!_items.IsItemExist(key))
+            if (!_items.IsEntityExists(key))
                 throw new ItemNotFoundException("Item not found");
-            _items.DeleteItem(key);
+            _items.DeleteEntity(key);
         }
 
         #endregion METHODS

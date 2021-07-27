@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 using TFT_Friendly.Back.Exceptions;
+using TFT_Friendly.Back.Models.Configurations;
+using TFT_Friendly.Back.Models.Database;
 using TFT_Friendly.Back.Models.Items;
 using TFT_Friendly.Back.Models.Traits;
 using TFT_Friendly.Back.Services.Mongo;
@@ -14,7 +17,7 @@ namespace TFT_Friendly.Back.Services.Traits
     {
         #region MEMBERS
 
-        private readonly TraitsContext _traitsContext;
+        private readonly EntityContext<Trait> _traitsContext;
 
         #endregion MEMBERS
 
@@ -23,11 +26,10 @@ namespace TFT_Friendly.Back.Services.Traits
         /// <summary>
         /// Initialize a new <see cref="TraitService"/> class
         /// </summary>
-        /// <param name="traitsContext">The traits context to use</param>
-        /// <exception cref="ArgumentNullException">Throw an exception if one parameter is null</exception>
-        public TraitService(TraitsContext traitsContext)
+        /// <param name="configuration">The database configuration to use</param>
+        public TraitService(IOptions<DatabaseConfiguration> configuration)
         {
-            _traitsContext = traitsContext ?? throw new ArgumentNullException(nameof(traitsContext));
+            _traitsContext = new EntityContext<Trait>(Currentdb.Traits, configuration);
         }
 
         #endregion CONSTRUCTOR
@@ -40,7 +42,7 @@ namespace TFT_Friendly.Back.Services.Traits
         /// <returns>The list of items</returns>
         public List<Trait> GetTraitList()
         {
-            return _traitsContext.GetTraits();
+            return _traitsContext.GetEntities();
         }
 
         /// <summary>
@@ -51,9 +53,9 @@ namespace TFT_Friendly.Back.Services.Traits
         /// <exception cref="TraitNotFoundException">Throw an exception if trait doesn't exist</exception>
         public Trait GetTrait(string key)
         {
-            if (!_traitsContext.IsTraitExist(key))
+            if (!_traitsContext.IsEntityExists(key))
                 throw new TraitNotFoundException("Trait not found");
-            return _traitsContext.GetTrait(key);
+            return _traitsContext.GetEntity(key);
         }
 
         /// <summary>
@@ -64,9 +66,9 @@ namespace TFT_Friendly.Back.Services.Traits
         /// <exception cref="TraitConflictException">Throw an exception if a trait with the same key already exist</exception>
         public Trait AddTrait(Trait trait)
         {
-            if (_traitsContext.IsTraitExist(trait.Key))
+            if (_traitsContext.IsEntityExists(trait.Key))
                 throw new TraitConflictException("A trait with this key already exist");
-            return _traitsContext.AddTrait(trait);
+            return _traitsContext.AddEntity(trait);
         }
 
         /// <summary>
@@ -77,9 +79,9 @@ namespace TFT_Friendly.Back.Services.Traits
         /// <exception cref="TraitNotFoundException">Throw an exception if the trait doesn't exist</exception>
         public Trait UpdateTrait(Trait trait)
         {
-            if (!_traitsContext.IsTraitExist(trait.Key))
+            if (!_traitsContext.IsEntityExists(trait.Key))
                 throw new TraitNotFoundException("Trait not found");
-            return _traitsContext.UpdateTrait(trait);
+            return _traitsContext.UpdateEntity(trait.Key, trait);
         }
         
         /// <summary>
@@ -91,9 +93,9 @@ namespace TFT_Friendly.Back.Services.Traits
         /// <exception cref="TraitNotFoundException">Throw an exception if the trait doesn't exist</exception>
         public Trait UpdateTrait(string key, Trait trait)
         {
-            if (!_traitsContext.IsTraitExist(key))
+            if (!_traitsContext.IsEntityExists(key))
                 throw new TraitNotFoundException("Trait not found");
-            return _traitsContext.UpdateTrait(key, trait);
+            return _traitsContext.UpdateEntity(key, trait);
         }
 
         /// <summary>
@@ -103,9 +105,9 @@ namespace TFT_Friendly.Back.Services.Traits
         /// <exception cref="TraitNotFoundException">Throw an exception if the trait doesn't exist</exception>
         public void DeleteTrait(string key)
         {
-            if (!_traitsContext.IsTraitExist(key))
+            if (!_traitsContext.IsEntityExists(key))
                 throw new TraitNotFoundException("Trait not found");
-            _traitsContext.DeleteTrait(key);
+            _traitsContext.DeleteEntity(key);
         }
 
         #endregion METHODS

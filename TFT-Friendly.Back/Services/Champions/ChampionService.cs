@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 using TFT_Friendly.Back.Exceptions;
 using TFT_Friendly.Back.Models.Champions;
-using TFT_Friendly.Back.Models.Traits;
+using TFT_Friendly.Back.Models.Configurations;
+using TFT_Friendly.Back.Models.Database;
 using TFT_Friendly.Back.Services.Mongo;
 
 namespace TFT_Friendly.Back.Services.Champions
@@ -14,7 +16,7 @@ namespace TFT_Friendly.Back.Services.Champions
     {
         #region MEMBERS
 
-        private readonly ChampionsContext _championsContext;
+        private readonly EntityContext<Champion> _championsContext;
 
         #endregion MEMBERS
 
@@ -23,11 +25,10 @@ namespace TFT_Friendly.Back.Services.Champions
         /// <summary>
         /// Initialize a new <see cref="ChampionService"/> class
         /// </summary>
-        /// <param name="championsContext">The traits context to use</param>
-        /// <exception cref="ArgumentNullException">Throw an exception if one parameter is null</exception>
-        public ChampionService(ChampionsContext championsContext)
+        /// <param name="configuration">The database configuration to use</param>
+        public ChampionService(IOptions<DatabaseConfiguration> configuration)
         {
-            _championsContext = championsContext ?? throw new ArgumentNullException(nameof(championsContext));
+            _championsContext = new EntityContext<Champion>(Currentdb.Champions, configuration);
         }
 
         #endregion CONSTRUCTOR
@@ -40,7 +41,7 @@ namespace TFT_Friendly.Back.Services.Champions
         /// <returns>The list of champions</returns>
         public List<Champion> GetChampionList()
         {
-            return _championsContext.GetChampions();
+            return _championsContext.GetEntities();
         }
 
         /// <summary>
@@ -51,9 +52,9 @@ namespace TFT_Friendly.Back.Services.Champions
         /// <exception cref="ChampionNotFoundException">Throw an exception if champion doesn't exist</exception>
         public Champion GetChampion(string key)
         {
-            if (!_championsContext.IsChampionExist(key))
+            if (!_championsContext.IsEntityExists(key))
                 throw new ChampionNotFoundException("Champion not found");
-            return _championsContext.GetChampion(key);
+            return _championsContext.GetEntity(key);
         }
 
         /// <summary>
@@ -64,9 +65,9 @@ namespace TFT_Friendly.Back.Services.Champions
         /// <exception cref="ChampionConflictException">Throw an exception if a champion with the same key already exist</exception>
         public Champion AddChampion(Champion champion)
         {
-            if (_championsContext.IsChampionExist(champion.Key))
+            if (_championsContext.IsEntityExists(champion.Key))
                 throw new ChampionConflictException("A champion with this key already exist");
-            return _championsContext.AddChampion(champion);
+            return _championsContext.AddEntity(champion);
         }
 
         /// <summary>
@@ -77,9 +78,9 @@ namespace TFT_Friendly.Back.Services.Champions
         /// <exception cref="ChampionNotFoundException">Throw an exception if the champion doesn't exist</exception>
         public Champion UpdateChampion(Champion champion)
         {
-            if (!_championsContext.IsChampionExist(champion.Key))
+            if (!_championsContext.IsEntityExists(champion.Key))
                 throw new ChampionNotFoundException("Champion not found");
-            return _championsContext.UpdateChampion(champion);
+            return _championsContext.UpdateEntity(champion.Key, champion);
         }
         
         /// <summary>
@@ -91,9 +92,9 @@ namespace TFT_Friendly.Back.Services.Champions
         /// <exception cref="ChampionNotFoundException">Throw an exception if the champion doesn't exist</exception>
         public Champion UpdateChampion(string key, Champion champion)
         {
-            if (!_championsContext.IsChampionExist(key))
+            if (!_championsContext.IsEntityExists(key))
                 throw new ChampionNotFoundException("Champion not found");
-            return _championsContext.UpdateChampion(key, champion);
+            return _championsContext.UpdateEntity(key, champion);
         }
 
         /// <summary>
@@ -103,9 +104,9 @@ namespace TFT_Friendly.Back.Services.Champions
         /// <exception cref="ChampionNotFoundException">Throw an exception if the champion doesn't exist</exception>
         public void DeleteChampion(string key)
         {
-            if (!_championsContext.IsChampionExist(key))
+            if (!_championsContext.IsEntityExists(key))
                 throw new ChampionNotFoundException("Champion not found");
-            _championsContext.DeleteChampion(key);
+            _championsContext.DeleteEntity(key);
         }
 
         #endregion METHODS
