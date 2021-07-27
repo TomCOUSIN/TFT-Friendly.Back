@@ -49,7 +49,7 @@ namespace TFT_Friendly.Back.Services.Champions
         /// </summary>
         /// <param name="key">The key of the champion</param>
         /// <returns>The requested champion</returns>
-        /// <exception cref="ChampionNotFoundException">Throw an exception if champion doesn't exist</exception>
+        /// <exception cref="EntityNotFoundException">Throw an exception if champion doesn't exist</exception>
         public Champion GetChampion(string key)
         {
             if (!_championsContext.IsEntityExists(key))
@@ -62,7 +62,7 @@ namespace TFT_Friendly.Back.Services.Champions
         /// </summary>
         /// <param name="champion">The champion to add</param>
         /// <returns>The newly added champion</returns>
-        /// <exception cref="ChampionConflictException">Throw an exception if a champion with the same key already exist</exception>
+        /// <exception cref="EntityConflictException">Throw an exception if a champion with the same key already exist</exception>
         public Champion AddChampion(Champion champion)
         {
             if (_championsContext.IsEntityExists(champion.Key))
@@ -75,7 +75,7 @@ namespace TFT_Friendly.Back.Services.Champions
         /// </summary>
         /// <param name="champion">The champion to update</param>
         /// <returns>The updated champion</returns>
-        /// <exception cref="ChampionNotFoundException">Throw an exception if the champion doesn't exist</exception>
+        /// <exception cref="EntityNotFoundException">Throw an exception if the champion doesn't exist</exception>
         public Champion UpdateChampion(Champion champion)
         {
             if (!_championsContext.IsEntityExists(champion.Key))
@@ -89,7 +89,7 @@ namespace TFT_Friendly.Back.Services.Champions
         /// <param name="key">The key of the champion to update</param>
         /// <param name="champion">The champion to update</param>
         /// <returns>The updated champion</returns>
-        /// <exception cref="ChampionNotFoundException">Throw an exception if the champion doesn't exist</exception>
+        /// <exception cref="EntityNotFoundException">Throw an exception if the champion doesn't exist</exception>
         public Champion UpdateChampion(string key, Champion champion)
         {
             if (!_championsContext.IsEntityExists(key))
@@ -101,7 +101,7 @@ namespace TFT_Friendly.Back.Services.Champions
         /// Delete a champion
         /// </summary>
         /// <param name="key">The key of champion to delete</param>
-        /// <exception cref="ChampionNotFoundException">Throw an exception if the champion doesn't exist</exception>
+        /// <exception cref="EntityNotFoundException">Throw an exception if the champion doesn't exist</exception>
         public void DeleteChampion(string key)
         {
             if (!_championsContext.IsEntityExists(key))
