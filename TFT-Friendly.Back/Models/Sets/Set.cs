@@ -1,25 +1,20 @@
 using System.Collections.Generic;
 using MongoDB.Bson.Serialization.Attributes;
+using TFT_Friendly.Back.Models.Entities;
 
 namespace TFT_Friendly.Back.Models.Sets
 {
     /// <summary>
     /// Set class
     /// </summary>
-    public class Set
+    public class Set : Entity
     {
         /// <summary>
         /// Set's name
         /// </summary>
         [BsonElement("name")]
         public string Name { get; set; }
-        
-        /// <summary>
-        /// Set's key
-        /// </summary>
-        [BsonElement("key")]
-        public string Key { get; set; }
-        
+
         /// <summary>
         /// Set's Champions
         /// </summary>

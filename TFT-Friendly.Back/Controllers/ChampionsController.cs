@@ -73,7 +73,7 @@ namespace TFT_Friendly.Back.Controllers
                     var addedChampion = _championService.AddChampion(champion);
                     addedChampions.Add(addedChampion);
                 }
-                catch (ChampionConflictException exception)
+                catch (EntityConflictException exception)
                 {
                     _logger.LogError(exception.Message);
                 }
@@ -96,7 +96,7 @@ namespace TFT_Friendly.Back.Controllers
             {
                 return Ok(_championService.GetChampion(key));
             }
-            catch (ChampionNotFoundException exception)
+            catch (EntityNotFoundException exception)
             {
                 return NotFound(new HttpError(StatusCodes.Status404NotFound, exception.Message));
             }
@@ -119,7 +119,7 @@ namespace TFT_Friendly.Back.Controllers
             {
                 return Ok(_championService.UpdateChampion(key, champion));
             }
-            catch (ChampionNotFoundException exception)
+            catch (EntityNotFoundException exception)
             {
                 return NotFound(new HttpError(StatusCodes.Status404NotFound, exception.Message));
             }
@@ -142,7 +142,7 @@ namespace TFT_Friendly.Back.Controllers
                 _championService.DeleteChampion(key);
                 return Ok();
             }
-            catch (ChampionNotFoundException exception)
+            catch (EntityNotFoundException exception)
             {
                 return NotFound(new HttpError(StatusCodes.Status404NotFound, exception.Message));
             }

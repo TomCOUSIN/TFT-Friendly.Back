@@ -73,7 +73,7 @@ namespace TFT_Friendly.Back.Controllers
                     var addedSet = _setsService.AddSet(set);
                     addedSets.Add(addedSet);
                 }
-                catch (SetConflictException exception)
+                catch (EntityConflictException exception)
                 {
                     _logger.LogError(exception.Message);
                 }
@@ -98,7 +98,7 @@ namespace TFT_Friendly.Back.Controllers
             {
                 return Ok(_setsService.GetSet(key));
             }
-            catch (ItemNotFoundException exception)
+            catch (EntityNotFoundException exception)
             {
                 return NotFound(new HttpError(StatusCodes.Status404NotFound, exception.Message));
             }
@@ -121,7 +121,7 @@ namespace TFT_Friendly.Back.Controllers
             {
                 return Ok(_setsService.UpdateSet(key, set));
             }
-            catch (SetNotFoundException exception)
+            catch (EntityNotFoundException exception)
             {
                 return NotFound(new HttpError(StatusCodes.Status404NotFound, exception.Message));
             }
@@ -144,7 +144,7 @@ namespace TFT_Friendly.Back.Controllers
                 _setsService.DeleteSet(key);
                 return Ok();
             }
-            catch (SetNotFoundException exception)
+            catch (EntityNotFoundException exception)
             {
                 return NotFound(new HttpError(StatusCodes.Status404NotFound, exception.Message));
             }

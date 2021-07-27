@@ -4,37 +4,37 @@ using System.Runtime.Serialization;
 namespace TFT_Friendly.Back.Exceptions
 {
     /// <summary>
-    /// ChampionConflictException class
+    /// EntityNotFoundException class
     /// </summary>
     [Serializable]
-    public class ChampionConflictException : Exception
+    public class EntityNotFoundException : Exception
     {
         #region CONSTRUCTOR
-        
+
         /// <summary>
-        /// Initialize a new <see cref="ChampionConflictException"/> class
+        /// Initialize a new <see cref="EntityNotFoundException"/> class
         /// </summary>
-        public ChampionConflictException() { }
+        public EntityNotFoundException() { }
         
         /// <summary>
-        /// Initialize a new <see cref="ChampionConflictException"/> class
+        /// Initialize a new <see cref="EntityNotFoundException"/> class
         /// </summary>
         /// <param name="message">The message of the exception</param>
-        public ChampionConflictException(string message) : base(message) { }
+        public EntityNotFoundException(string message) : base(message) { }
         
         /// <summary>
-        /// Initialize a new <see cref="ChampionConflictException"/> class
+        /// Initialize a new <see cref="EntityNotFoundException"/> class
         /// </summary>
         /// <param name="message">The message of the exception</param>
         /// <param name="innerException">The inner exception of the exception</param>
-        public ChampionConflictException(string message, Exception innerException) : base(message, innerException) { }
+        public EntityNotFoundException(string message, Exception innerException) : base(message, innerException) { }
         
         /// <summary>
-        /// Initialize a new <see cref="ChampionConflictException"/> class
+        /// Initialize a new <see cref="EntityNotFoundException"/> class
         /// </summary>
         /// <param name="info">The serialization info of the exception</param>
         /// <param name="context">The streaming context of the exception</param>
-        protected ChampionConflictException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        protected EntityNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
         #endregion CONSTRUCTOR
     }

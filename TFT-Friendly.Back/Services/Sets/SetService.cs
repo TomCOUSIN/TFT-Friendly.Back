@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 using TFT_Friendly.Back.Exceptions;
+using TFT_Friendly.Back.Models.Configurations;
+using TFT_Friendly.Back.Models.Database;
 using TFT_Friendly.Back.Models.Sets;
 using TFT_Friendly.Back.Services.Mongo;
 
@@ -13,7 +16,7 @@ namespace TFT_Friendly.Back.Services.Sets
     {
         #region MEMBERS
 
-        private readonly SetsContext _setsContext;
+        private readonly EntityContext<Set> _setsContext;
 
         #endregion MEMBERS
 
@@ -22,11 +25,10 @@ namespace TFT_Friendly.Back.Services.Sets
         /// <summary>
         /// Initialize a new <see cref="SetService"/> class
         /// </summary>
-        /// <param name="setsContext">The sets context to use</param>
-        /// <exception cref="ArgumentNullException">Throw an exception if one parameter is null</exception>
-        public SetService(SetsContext setsContext)
+        /// <param name="configuration">The database configuration to use</param>
+        public SetService(IOptions<DatabaseConfiguration> configuration)
         {
-            _setsContext = setsContext ?? throw new ArgumentNullException(nameof(setsContext));
+            _setsContext = new EntityContext<Set>(Currentdb.Sets, configuration);
         }
 
         #endregion CONSTRUCTOR
@@ -39,7 +41,7 @@ namespace TFT_Friendly.Back.Services.Sets
         /// <returns>The list of sets</returns>
         public List<Set> GetSetList()
         {
-            return _setsContext.GetSets();
+            return _setsContext.GetEntities();
         }
 
         /// <summary>
@@ -50,9 +52,9 @@ namespace TFT_Friendly.Back.Services.Sets
         /// <exception cref="SetNotFoundException">Throw an exception if set doesn't exist</exception>
         public Set GetSet(string key)
         {
-            if (!_setsContext.IsSetExist(key))
-                throw new SetNotFoundException("Set not found");
-            return _setsContext.GetSet(key);
+            if (!_setsContext.IsEntityExists(key))
+                throw new EntityNotFoundException("Set not found");
+            return _setsContext.GetEntity(key);
         }
 
         /// <summary>
@@ -63,9 +65,9 @@ namespace TFT_Friendly.Back.Services.Sets
         /// <exception cref="SetConflictException">Throw an exception if a set with the same key already exist</exception>
         public Set AddSet(Set set)
         {
-            if (_setsContext.IsSetExist(set.Key))
-                throw new SetConflictException("A set with this key already exist");
-            return _setsContext.AddSet(set);
+            if (_setsContext.IsEntityExists(set.Key))
+                throw new EntityConflictException("A set with this key already exist");
+            return _setsContext.AddEntity(set);
         }
 
         /// <summary>
@@ -76,9 +78,9 @@ namespace TFT_Friendly.Back.Services.Sets
         /// <exception cref="SetNotFoundException">Throw an exception if the set doesn't exist</exception>
         public Set UpdateSet(Set set)
         {
-            if (!_setsContext.IsSetExist(set.Key))
-                throw new SetNotFoundException("Set not found");
-            return _setsContext.UpdateSet(set);
+            if (!_setsContext.IsEntityExists(set.Key))
+                throw new EntityNotFoundException("Set not found");
+            return _setsContext.UpdateEntity(set.Key, set);
         }
 
         /// <summary>
@@ -90,9 +92,9 @@ namespace TFT_Friendly.Back.Services.Sets
         /// <exception cref="SetNotFoundException">Throw an exception if the set doesn't exist</exception>
         public Set UpdateSet(string key, Set set)
         {
-            if (!_setsContext.IsSetExist(key))
-                throw new SetNotFoundException("Set not found");
-            return _setsContext.UpdateSet(key, set);
+            if (!_setsContext.IsEntityExists(key))
+                throw new EntityNotFoundException("Set not found");
+            return _setsContext.UpdateEntity(key, set);
         }
 
         /// <summary>
@@ -102,9 +104,9 @@ namespace TFT_Friendly.Back.Services.Sets
         /// <exception cref="SetNotFoundException">Throw an exception if the set doesn't exist</exception>
         public void DeleteSet(string key)
         {
-            if (!_setsContext.IsSetExist(key))
-                throw new SetNotFoundException("Set not found");
-            _setsContext.DeleteSet(key);
+            if (!_setsContext.IsEntityExists(key))
+                throw new EntityNotFoundException("Set not found");
+            _setsContext.DeleteEntity(key);
         }
 
         #endregion METHODS
