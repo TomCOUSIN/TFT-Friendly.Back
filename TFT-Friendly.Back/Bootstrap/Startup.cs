@@ -124,10 +124,6 @@ namespace TFT_Friendly.Back.Bootstrap
             services.AddScoped<IChampionService, ChampionService>();
             services.AddScoped<ISetService, SetService>();
             services.AddSingleton<UsersContext>();
-            services.AddSingleton<ItemsContext>();
-            services.AddSingleton<TraitsContext>();
-            services.AddSingleton<ChampionsContext>();
-            services.AddSingleton<SetsContext>();
             services.AddSingleton<TftClient>();
         }
 
