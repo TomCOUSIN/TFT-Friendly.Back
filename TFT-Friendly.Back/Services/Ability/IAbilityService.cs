@@ -15,7 +15,7 @@ namespace TFT_Friendly.Back.Services.Ability
 
         public Models.Abilities.Ability AddAbility(Models.Abilities.Ability ability);
 
-        public Models.Abilities.Ability UpdateAbility(Models.Abilities.Ability ability);
+        public Models.Abilities.Ability UpdateAbility(string key, Models.Abilities.Ability ability);
 
         public void DeleteAbility(string key);
 
@@ -25,7 +25,7 @@ namespace TFT_Friendly.Back.Services.Ability
 
         public AbilityEffect AddAbilityEffect(AbilityEffect effect);
 
-        public AbilityEffect UpdateAbilityEffect(AbilityEffect effect);
+        public AbilityEffect UpdateAbilityEffect(string key, AbilityEffect effect);
 
         public void DeleteAbilityEffect(string key);
     }

@@ -80,16 +80,17 @@ namespace TFT_Friendly.Back.Services.Ability
         /// <summary>
         /// Update an ability
         /// </summary>
-        /// <param name="ability">The ability to update</param>
+        /// <param name="key">The ability's key to update</param>
+        /// /// <param name="ability">The ability to update</param>
         /// <returns>The updated ability</returns>
         /// <exception cref="EntityNotFoundException">Throw an exception if the ability doesn't exists</exception>
-        public Models.Abilities.Ability UpdateAbility(Models.Abilities.Ability ability)
+        public Models.Abilities.Ability UpdateAbility(string key, Models.Abilities.Ability ability)
         {
-            if (!_abilityContext.IsEntityExists(ability.Key))
+            if (!_abilityContext.IsEntityExists(key))
             {
                 throw new EntityNotFoundException("This Ability doesn't exists");
             }
-            return _abilityContext.UpdateEntity(ability.Key, ability);
+            return _abilityContext.UpdateEntity(key, ability);
         }
 
         /// <summary>
@@ -152,16 +153,17 @@ namespace TFT_Friendly.Back.Services.Ability
         /// <summary>
         /// Update an ability effect
         /// </summary>
+        /// <param name="key">The ability effect's key to update</param>
         /// <param name="effect">The ability effect to update</param>
         /// <returns>The updated ability effect </returns>
         /// <exception cref="EntityNotFoundException">Throw an exception if the ability effect doesn't exists</exception>
-        public AbilityEffect UpdateAbilityEffect(AbilityEffect effect)
+        public AbilityEffect UpdateAbilityEffect(string key, AbilityEffect effect)
         {
-            if (!_abilityEffectContext.IsEntityExists(effect.Key))
+            if (!_abilityEffectContext.IsEntityExists(key))
             {
                 throw new EntityNotFoundException("This AbilityEffect doesn't exists");
             }
-            return _abilityEffectContext.UpdateEntity(effect.Key, effect);
+            return _abilityEffectContext.UpdateEntity(key, effect);
         }
 
         /// <summary>
