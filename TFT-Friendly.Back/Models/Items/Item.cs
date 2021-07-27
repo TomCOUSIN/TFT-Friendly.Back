@@ -1,21 +1,15 @@
 using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using TFT_Friendly.Back.Models.Entities;
 
 namespace TFT_Friendly.Back.Models.Items
 {
     /// <summary>
     /// Item class
     /// </summary>
-    public class Item
+    public class Item : Entity
     {
-        /// <summary>
-        /// Id of the item
-        /// </summary>
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
-        
         /// <summary>
         /// Specific Id of the item
         /// </summary>
@@ -27,12 +21,6 @@ namespace TFT_Friendly.Back.Models.Items
         /// </summary>
         [BsonElement("Name")]
         public string Name { get; set; }
-        
-        /// <summary>
-        /// Key of the item
-        /// </summary>
-        [BsonElement("Key")]
-        public string Key { get; set; }
         
         /// <summary>
         /// Description of the item

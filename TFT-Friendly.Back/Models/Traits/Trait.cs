@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using MongoDB.Bson.Serialization.Attributes;
+using TFT_Friendly.Back.Models.Entities;
 
 namespace TFT_Friendly.Back.Models.Traits
 {
     /// <summary>
     /// Trait class
     /// </summary>
-    public class Trait
+    public class Trait : Entity
     {
         /// <summary>
         /// Name of the Trait
@@ -19,13 +20,7 @@ namespace TFT_Friendly.Back.Models.Traits
         /// </summary>
         [BsonElement("Description")]
         public string Description { get; set; }
-        
-        /// <summary>
-        /// Key of the trait
-        /// </summary>
-        [BsonElement("Key")]
-        public string Key { get; set; }
-        
+
         /// <summary>
         /// Type of the Trait
         /// </summary>

@@ -1,26 +1,21 @@
 using System.Collections.Generic;
 using MongoDB.Bson.Serialization.Attributes;
 using TFT_Friendly.Back.Models.Abilities;
+using TFT_Friendly.Back.Models.Entities;
 
 namespace TFT_Friendly.Back.Models.Champions
 {
     /// <summary>
     /// Champion class
     /// </summary>
-    public class Champion
+    public class Champion : Entity
     {
         /// <summary>
         /// Name of the champion
         /// </summary>
         [BsonElement("name")]
         public string Name { get; set; }
-        
-        /// <summary>
-        /// Key of the champion
-        /// </summary>
-        [BsonElement("key")]
-        public string Key { get; set; }
-        
+
         /// <summary>
         /// Cost of the champion
         /// </summary>

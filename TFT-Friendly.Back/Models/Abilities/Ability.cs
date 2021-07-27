@@ -1,25 +1,20 @@
 using System.Collections.Generic;
 using MongoDB.Bson.Serialization.Attributes;
+using TFT_Friendly.Back.Models.Entities;
 
 namespace TFT_Friendly.Back.Models.Abilities
 {
     /// <summary>
     /// Ability class
     /// </summary>
-    public class Ability
+    public class Ability : Entity
     {
         /// <summary>
         /// Name of the ability
         /// </summary>
         [BsonElement("name")]
         public string Name { get; set; }
-        
-        /// <summary>
-        /// Key of the ability
-        /// </summary>
-        [BsonElement("key")]
-        public string Key { get; set; }
-        
+
         /// <summary>
         /// Passive of the ability
         /// </summary>
