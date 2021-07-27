@@ -9,6 +9,8 @@ namespace TFT_Friendly.Back.Models.Database
         Champions,
         Traits,
         Sets,
-        Updates
+        Updates,
+        Ability,
+        AbilityEffect
     }
 }

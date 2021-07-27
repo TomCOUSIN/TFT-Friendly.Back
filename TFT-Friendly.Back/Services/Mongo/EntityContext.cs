@@ -36,6 +36,8 @@ namespace TFT_Friendly.Back.Services.Mongo
                 CurrentDb.Sets => Database.GetCollection<T>(Configuration.ItemsCollectionName),
                 CurrentDb.Traits => Database.GetCollection<T>(Configuration.ItemsCollectionName),
                 CurrentDb.Updates => Database.GetCollection<T>(Configuration.UpdatesCollectionName),
+                CurrentDb.Ability => Database.GetCollection<T>(Configuration.AbilitiesCollectionName),
+                CurrentDb.AbilityEffect => Database.GetCollection<T>(Configuration.AbilityEffectsCollectionName),
                 _ => throw new Exception()
             };
         }
