@@ -17,6 +17,7 @@ using TFT_Friendly.Back.Services.Items;
 using TFT_Friendly.Back.Services.Mongo;
 using TFT_Friendly.Back.Services.Sets;
 using TFT_Friendly.Back.Services.Traits;
+using TFT_Friendly.Back.Services.Updates;
 using TFT_Friendly.Back.Services.Users;
 
 namespace TFT_Friendly.Back.Bootstrap
@@ -123,6 +124,7 @@ namespace TFT_Friendly.Back.Bootstrap
             services.AddScoped<ITraitService, TraitService>();
             services.AddScoped<IChampionService, ChampionService>();
             services.AddScoped<ISetService, SetService>();
+            services.AddScoped<IUpdateService, UpdateService>();
             services.AddSingleton<UsersContext>();
             services.AddSingleton<TftClient>();
         }

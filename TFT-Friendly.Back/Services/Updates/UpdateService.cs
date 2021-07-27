@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Options;
+using TFT_Friendly.Back.Exceptions;
 using TFT_Friendly.Back.Models.Configurations;
 using TFT_Friendly.Back.Models.Database;
 using TFT_Friendly.Back.Models.Updates;
@@ -45,7 +46,8 @@ namespace TFT_Friendly.Back.Services.Updates
             var newUpdate = _context.AddEntity(new Update
             {
                 Updates = updates,
-                Identifier = currentUpdates.Last().Identifier + 1
+                Identifier = currentUpdates.Last().Identifier + 1,
+                Key = (currentUpdates.Last().Identifier + 1).ToString()
             });
             return newUpdate.Identifier;
         }
@@ -82,6 +84,19 @@ namespace TFT_Friendly.Back.Services.Updates
                 ++index;
             }
             return fromUpdates;
+        }
+
+        /// <summary>
+        /// Get a specific update by this identifier
+        /// </summary>
+        /// <param name="identifier">The identifier of the update</param>
+        /// <returns>The requested update</returns>
+        /// <exception cref="EntityNotFoundException">Throw an exception if the update don't exists</exception>
+        public Update GetUpdateByIdentifier(long identifier)
+        {
+            if (!_context.IsEntityExists(identifier.ToString()))
+                throw new EntityNotFoundException("This Updates doesn't exists.");
+            return _context.GetEntity(identifier.ToString());
         }
 
         #endregion METHODS

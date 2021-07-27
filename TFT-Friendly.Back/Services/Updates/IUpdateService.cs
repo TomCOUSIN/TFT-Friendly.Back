@@ -13,5 +13,7 @@ namespace TFT_Friendly.Back.Services.Updates
         public long GetLastUpdateIdentifier();
 
         public List<Update> GetLastUpdates(long from);
+
+        public Update GetUpdateByIdentifier(long identifier);
     }
 }
