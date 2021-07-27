@@ -27,14 +27,15 @@ namespace TFT_Friendly.Back.Services.Mongo
         /// </summary>
         /// <param name="currentDb">The current database to use</param>
         /// <param name="configuration">The database configuration to use</param>
-        public EntityContext(Currentdb currentDb, IOptions<DatabaseConfiguration> configuration) : base(configuration)
+        public EntityContext(CurrentDb currentDb, IOptions<DatabaseConfiguration> configuration) : base(configuration)
         {
             _entities = currentDb switch
             {
-                Currentdb.Champions => Database.GetCollection<T>(Configuration.ItemsCollectionName),
-                Currentdb.Items => Database.GetCollection<T>(Configuration.ItemsCollectionName),
-                Currentdb.Sets => Database.GetCollection<T>(Configuration.ItemsCollectionName),
-                Currentdb.Traits => Database.GetCollection<T>(Configuration.ItemsCollectionName),
+                CurrentDb.Champions => Database.GetCollection<T>(Configuration.ItemsCollectionName),
+                CurrentDb.Items => Database.GetCollection<T>(Configuration.ItemsCollectionName),
+                CurrentDb.Sets => Database.GetCollection<T>(Configuration.ItemsCollectionName),
+                CurrentDb.Traits => Database.GetCollection<T>(Configuration.ItemsCollectionName),
+                CurrentDb.Updates => Database.GetCollection<T>(Configuration.UpdatesCollectionName),
                 _ => throw new Exception()
             };
         }

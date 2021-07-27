@@ -28,7 +28,7 @@ namespace TFT_Friendly.Back.Services.Sets
         /// <param name="configuration">The database configuration to use</param>
         public SetService(IOptions<DatabaseConfiguration> configuration)
         {
-            _setsContext = new EntityContext<Set>(Currentdb.Sets, configuration);
+            _setsContext = new EntityContext<Set>(CurrentDb.Sets, configuration);
         }
 
         #endregion CONSTRUCTOR

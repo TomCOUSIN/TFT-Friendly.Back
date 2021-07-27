@@ -28,7 +28,7 @@ namespace TFT_Friendly.Back.Services.Items
         /// <param name="configuration">The database configuration to use</param>
         public ItemService(IOptions<DatabaseConfiguration> configuration)
         {
-            _items = new EntityContext<Item>(Currentdb.Items, configuration);
+            _items = new EntityContext<Item>(CurrentDb.Items, configuration);
         }
 
         #endregion CONSTRUCTOR

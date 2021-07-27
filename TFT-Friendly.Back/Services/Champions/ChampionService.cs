@@ -28,7 +28,7 @@ namespace TFT_Friendly.Back.Services.Champions
         /// <param name="configuration">The database configuration to use</param>
         public ChampionService(IOptions<DatabaseConfiguration> configuration)
         {
-            _championsContext = new EntityContext<Champion>(Currentdb.Champions, configuration);
+            _championsContext = new EntityContext<Champion>(CurrentDb.Champions, configuration);
         }
 
         #endregion CONSTRUCTOR
