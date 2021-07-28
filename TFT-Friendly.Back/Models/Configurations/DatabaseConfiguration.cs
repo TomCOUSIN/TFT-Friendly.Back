@@ -18,6 +18,12 @@ namespace TFT_Friendly.Back.Models.Configurations
         
         public string SetsCollectionName { get; set; }
         
+        public string UpdatesCollectionName { get; set; }
+        
+        public string AbilitiesCollectionName { get; set; }
+        
+        public string AbilityEffectsCollectionName { get; set; }
+
         public string ConnectionString { get; set; }
         
         public string DatabaseName { get; set; }

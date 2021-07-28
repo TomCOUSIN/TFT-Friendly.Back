@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using TFT_Friendly.Back.Exceptions;
 using TFT_Friendly.Back.Models.Champions;
 using TFT_Friendly.Back.Models.Configurations;
 using TFT_Friendly.Back.Models.Database;
 using TFT_Friendly.Back.Services.Mongo;
+using TFT_Friendly.Back.Services.Updates;
 
 namespace TFT_Friendly.Back.Services.Champions
 {
@@ -17,6 +19,7 @@ namespace TFT_Friendly.Back.Services.Champions
         #region MEMBERS
 
         private readonly EntityContext<Champion> _championsContext;
+        private readonly IUpdateService _updateService;
 
         #endregion MEMBERS
 
@@ -26,9 +29,11 @@ namespace TFT_Friendly.Back.Services.Champions
         /// Initialize a new <see cref="ChampionService"/> class
         /// </summary>
         /// <param name="configuration">The database configuration to use</param>
-        public ChampionService(IOptions<DatabaseConfiguration> configuration)
+        /// <param name="updateService">The update service to use</param>
+        public ChampionService(IOptions<DatabaseConfiguration> configuration, IUpdateService updateService)
         {
-            _championsContext = new EntityContext<Champion>(Currentdb.Champions, configuration);
+            _championsContext = new EntityContext<Champion>(CurrentDb.Champions, configuration);
+            _updateService = updateService ?? throw new ArgumentNullException(nameof(updateService));
         }
 
         #endregion CONSTRUCTOR
@@ -67,7 +72,9 @@ namespace TFT_Friendly.Back.Services.Champions
         {
             if (_championsContext.IsEntityExists(champion.Key))
                 throw new EntityConflictException("A champion with this key already exist");
-            return _championsContext.AddEntity(champion);
+            _championsContext.AddEntity(champion);
+            _updateService.RegisterChampion(champion);
+            return champion;
         }
 
         /// <summary>
@@ -80,7 +87,9 @@ namespace TFT_Friendly.Back.Services.Champions
         {
             if (!_championsContext.IsEntityExists(champion.Key))
                 throw new EntityNotFoundException("Champion not found");
-            return _championsContext.UpdateEntity(champion.Key, champion);
+            _championsContext.UpdateEntity(champion.Key, champion);
+            _updateService.UpdateChampion(champion);
+            return champion;
         }
         
         /// <summary>
@@ -94,7 +103,9 @@ namespace TFT_Friendly.Back.Services.Champions
         {
             if (!_championsContext.IsEntityExists(key))
                 throw new EntityNotFoundException("Champion not found");
-            return _championsContext.UpdateEntity(key, champion);
+            _championsContext.UpdateEntity(key, champion);
+            _updateService.UpdateChampion(champion);
+            return champion;
         }
 
         /// <summary>
@@ -106,7 +117,9 @@ namespace TFT_Friendly.Back.Services.Champions
         {
             if (!_championsContext.IsEntityExists(key))
                 throw new EntityNotFoundException("Champion not found");
+            var champion = _championsContext.GetEntity(key);
             _championsContext.DeleteEntity(key);
+            _updateService.DeleteChampion(champion);
         }
 
         #endregion METHODS

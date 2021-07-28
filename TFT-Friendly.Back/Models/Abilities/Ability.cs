@@ -31,6 +31,6 @@ namespace TFT_Friendly.Back.Models.Abilities
         /// Effect of the ability
         /// </summary>
         [BsonElement("effect")]
-        public List<AbilityEffect> Effect { get; set; }
+        public List<string> EffectKey { get; set; }
     }
 }

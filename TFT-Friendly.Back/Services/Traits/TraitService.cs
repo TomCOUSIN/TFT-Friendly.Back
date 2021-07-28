@@ -29,7 +29,7 @@ namespace TFT_Friendly.Back.Services.Traits
         /// <param name="configuration">The database configuration to use</param>
         public TraitService(IOptions<DatabaseConfiguration> configuration)
         {
-            _traitsContext = new EntityContext<Trait>(Currentdb.Traits, configuration);
+            _traitsContext = new EntityContext<Trait>(CurrentDb.Traits, configuration);
         }
 
         #endregion CONSTRUCTOR

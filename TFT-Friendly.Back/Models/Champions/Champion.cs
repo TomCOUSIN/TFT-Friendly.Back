@@ -86,6 +86,6 @@ namespace TFT_Friendly.Back.Models.Champions
         /// Ability of the champion
         /// </summary>
         [BsonElement("ability")]
-        public Ability Ability { get; set; }
+        public string AbilityKey { get; set; }
     }
 }

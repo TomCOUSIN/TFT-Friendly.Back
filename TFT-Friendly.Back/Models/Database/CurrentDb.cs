@@ -3,11 +3,14 @@ namespace TFT_Friendly.Back.Models.Database
     /// <summary>
     /// CurrentDb enum
     /// </summary>
-    public enum Currentdb
+    public enum CurrentDb
     {
         Items,
         Champions,
         Traits,
-        Sets
+        Sets,
+        Updates,
+        Ability,
+        AbilityEffect
     }
 }
