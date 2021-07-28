@@ -31,10 +31,10 @@ namespace TFT_Friendly.Back.Services.Mongo
         {
             _entities = currentDb switch
             {
-                CurrentDb.Champions => Database.GetCollection<T>(Configuration.ItemsCollectionName),
+                CurrentDb.Champions => Database.GetCollection<T>(Configuration.ChampionsCollectionName),
                 CurrentDb.Items => Database.GetCollection<T>(Configuration.ItemsCollectionName),
-                CurrentDb.Sets => Database.GetCollection<T>(Configuration.ItemsCollectionName),
-                CurrentDb.Traits => Database.GetCollection<T>(Configuration.ItemsCollectionName),
+                CurrentDb.Sets => Database.GetCollection<T>(Configuration.SetsCollectionName),
+                CurrentDb.Traits => Database.GetCollection<T>(Configuration.TraitsCollectionName),
                 CurrentDb.Updates => Database.GetCollection<T>(Configuration.UpdatesCollectionName),
                 CurrentDb.Ability => Database.GetCollection<T>(Configuration.AbilitiesCollectionName),
                 CurrentDb.AbilityEffect => Database.GetCollection<T>(Configuration.AbilityEffectsCollectionName),
@@ -66,6 +66,14 @@ namespace TFT_Friendly.Back.Services.Mongo
         public List<T> GetEntities()
         {
             return _entities.Find(entity => true).ToList();
+        }
+        /// <summary>
+        /// Get the last known entity
+        /// </summary>
+        /// <returns>The last known entity</returns>
+        public T GetLastEntity()
+        {
+            return _entities.Find(entity => true).Limit(1).FirstOrDefault();
         }
 
         /// <summary>

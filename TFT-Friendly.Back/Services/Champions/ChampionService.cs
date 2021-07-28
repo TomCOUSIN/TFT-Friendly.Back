@@ -72,8 +72,9 @@ namespace TFT_Friendly.Back.Services.Champions
         {
             if (_championsContext.IsEntityExists(champion.Key))
                 throw new EntityConflictException("A champion with this key already exist");
-            _updateService.RegisterUpdate(new List<string> {"[ADD]"+champion.ToJson()});
-            return _championsContext.AddEntity(champion);
+            _championsContext.AddEntity(champion);
+            _updateService.RegisterChampion(champion);
+            return champion;
         }
 
         /// <summary>
@@ -86,7 +87,9 @@ namespace TFT_Friendly.Back.Services.Champions
         {
             if (!_championsContext.IsEntityExists(champion.Key))
                 throw new EntityNotFoundException("Champion not found");
-            return _championsContext.UpdateEntity(champion.Key, champion);
+            _championsContext.UpdateEntity(champion.Key, champion);
+            _updateService.UpdateChampion(champion);
+            return champion;
         }
         
         /// <summary>
@@ -100,7 +103,9 @@ namespace TFT_Friendly.Back.Services.Champions
         {
             if (!_championsContext.IsEntityExists(key))
                 throw new EntityNotFoundException("Champion not found");
-            return _championsContext.UpdateEntity(key, champion);
+            _championsContext.UpdateEntity(key, champion);
+            _updateService.UpdateChampion(champion);
+            return champion;
         }
 
         /// <summary>
@@ -112,7 +117,9 @@ namespace TFT_Friendly.Back.Services.Champions
         {
             if (!_championsContext.IsEntityExists(key))
                 throw new EntityNotFoundException("Champion not found");
+            var champion = _championsContext.GetEntity(key);
             _championsContext.DeleteEntity(key);
+            _updateService.DeleteChampion(champion);
         }
 
         #endregion METHODS

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Options;
 using TFT_Friendly.Back.Exceptions;
+using TFT_Friendly.Back.Models.Champions;
 using TFT_Friendly.Back.Models.Configurations;
 using TFT_Friendly.Back.Models.Database;
 using TFT_Friendly.Back.Models.Updates;
@@ -35,6 +36,110 @@ namespace TFT_Friendly.Back.Services.Updates
 
         #region METHODS
 
+        #region CHAMPIONS
+
+        /// <summary>
+        /// Register a new update associated with a champion creation
+        /// </summary>
+        /// <param name="champion">The champion to register</param>
+        /// <returns>The identifier of the new update</returns>
+        public long RegisterChampion(Champion champion)
+        {
+            var currentUpdates = _context.GetEntities();
+
+            var updates = new List<string>
+            {
+                $"CREATE;CHAMPION;{champion.Key}",
+                $"SET;CHAMPION;{champion.Key};Name;{champion.Name};",
+                $"SET;CHAMPION;{champion.Key};Cost;{champion.Cost};",
+                $"SET;CHAMPION;{champion.Key};Armor;{champion.Armor};",
+                $"SET;CHAMPION;{champion.Key};MagicResist;{champion.MagicResist};",
+                $"SET;CHAMPION;{champion.Key};Speed;{champion.Speed};",
+                $"SET;CHAMPION;{champion.Key};Range;{champion.Range};",
+                $"SET;CHAMPION;{champion.Key};ManaMax;{champion.ManaMax};",
+                $"SET;CHAMPION;{champion.Key};AbilityKey;{champion.AbilityKey};",
+            };
+            updates.AddRange(champion.Traits.Select(trait => $"APPEND;CHAMPION;{champion.Key};Traits;{trait}"));
+            updates.AddRange(champion.Origins.Select(origin => $"APPEND;CHAMPION;{champion.Key};Origins;{origin}"));
+            updates.AddRange(champion.Health.Select(health => $"APPEND;CHAMPION;{champion.Key};Health;{health}"));
+            updates.AddRange(champion.Damage.Select(damage => $"APPEND;CHAMPION;{champion.Key};Damage;{damage}"));
+            updates.AddRange(champion.Dps.Select(dps => $"APPEND;CHAMPION;{champion.Key};Dps;{dps}"));
+
+            var update = new Update
+            {
+                Updates = updates,
+                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
+                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
+            };
+            _context.AddEntity(update);
+            return update.Identifier;
+        }
+
+        /// <summary>
+        /// Register a new update associated with a champion update
+        /// </summary>
+        /// <param name="champion">The updated champion</param>
+        /// <returns>The identifier of the new update</returns>
+        public long UpdateChampion(Champion champion)
+        {
+            var currentUpdates = _context.GetEntities();
+            
+            var updates = new List<string>
+            {
+                $"UPDATE;CHAMPION;{champion.Key};Name;{champion.Name};",
+                $"UPDATE;CHAMPION;{champion.Key};Cost;{champion.Cost};",
+                $"UPDATE;CHAMPION;{champion.Key};Armor;{champion.Armor};",
+                $"UPDATE;CHAMPION;{champion.Key};MagicResist;{champion.MagicResist};",
+                $"UPDATE;CHAMPION;{champion.Key};Speed;{champion.Speed};",
+                $"UPDATE;CHAMPION;{champion.Key};Range;{champion.Range};",
+                $"UPDATE;CHAMPION;{champion.Key};ManaMax;{champion.ManaMax};",
+                $"UPDATE;CHAMPION;{champion.Key};AbilityKey;{champion.AbilityKey};",
+                $"REMOVE;CHAMPION;{champion.Key};Traits",
+                $"REMOVE;CHAMPION;{champion.Key};Origins",
+                $"REMOVE;CHAMPION;{champion.Key};Health",
+                $"REMOVE;CHAMPION;{champion.Key};Damage",
+                $"REMOVE;CHAMPION;{champion.Key};Dps",
+            };
+            updates.AddRange(champion.Traits.Select(trait => $"APPEND;CHAMPION;{champion.Key};Traits;{trait}"));
+            updates.AddRange(champion.Origins.Select(origin => $"APPEND;CHAMPION;{champion.Key};Origins;{origin}"));
+            updates.AddRange(champion.Health.Select(health => $"APPEND;CHAMPION;{champion.Key};Health;{health}"));
+            updates.AddRange(champion.Damage.Select(damage => $"APPEND;CHAMPION;{champion.Key};Damage;{damage}"));
+            updates.AddRange(champion.Dps.Select(dps => $"APPEND;CHAMPION;{champion.Key};Dps;{dps}"));
+            
+            var update = new Update
+            {
+                Updates = updates,
+                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
+                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
+            };
+            _context.AddEntity(update);
+            return update.Identifier;
+        }
+
+        /// <summary>
+        /// Register a new update associated with a champion deletion
+        /// </summary>
+        /// <param name="champion">The champion to delete</param>
+        /// <returns>The identifier of the new update</returns>
+        public long DeleteChampion(Champion champion)
+        {
+            var currentUpdates = _context.GetEntities();
+            
+            var update = new Update
+            {
+                Updates = new List<string>
+                {
+                    $"DELETE;CHAMPION;{champion.Key}"
+                },
+                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
+                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
+            };
+            _context.AddEntity(update);
+            return update.Identifier;
+        }
+
+        #endregion CHAMPIONS
+
         /// <summary>
         /// Register a new update
         /// </summary>
@@ -48,19 +153,16 @@ namespace TFT_Friendly.Back.Services.Updates
                 return _context.AddEntity(new Update
                 {
                     Updates = updates,
-                    Identifier = currentUpdates.Last().Identifier + 1,
-                    Key = (currentUpdates.Last().Identifier + 1).ToString()
+                    Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
+                    Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
                 }).Identifier;
             }
-            else
+            return _context.AddEntity(new Update
             {
-                return _context.AddEntity(new Update
-                {
-                    Updates = updates,
-                    Identifier = 0,
-                    Key = "0"
-                }).Identifier;
-            }
+                Updates = updates,
+                Identifier = 0,
+                Key = "0"
+            }).Identifier;
         }
 
         /// <summary>
@@ -84,7 +186,7 @@ namespace TFT_Friendly.Back.Services.Updates
             var fromUpdates = new List<Update>();
             var index = 0;
             
-            while (updates[index].Identifier != from)
+            while (updates[index].Identifier <= from)
             {
                 ++index;
             }
