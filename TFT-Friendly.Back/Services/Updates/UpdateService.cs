@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Options;
 using TFT_Friendly.Back.Exceptions;
+using TFT_Friendly.Back.Models.Abilities;
 using TFT_Friendly.Back.Models.Champions;
 using TFT_Friendly.Back.Models.Configurations;
 using TFT_Friendly.Back.Models.Database;
@@ -139,6 +140,166 @@ namespace TFT_Friendly.Back.Services.Updates
         }
 
         #endregion CHAMPIONS
+        
+        #region ABILITY
+        
+        /// <summary>
+        /// Register a new update associated with an ability creation
+        /// </summary>
+        /// <param name="ability">The ability to register</param>
+        /// <returns>The identifier of the new update</returns>
+        public long RegisterAbility(Models.Abilities.Ability ability)
+        {
+            var currentUpdates = _context.GetEntities();
+
+            var updates = new List<string>
+            {
+                $"CREATE;ABILITY;{ability.Key}",
+                $"SET;ABILITY;{ability.Key};Name;{ability.Name};",
+                $"SET;ABILITY;{ability.Key};Active;{ability.Active};",
+                $"SET;ABILITY;{ability.Key};Passive;{ability.Passive};",
+                $"SET;ABILITY;{ability.Key};EffectKey;{ability.EffectKey};",
+            };
+
+            var update = new Update
+            {
+                Updates = updates,
+                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
+                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
+            };
+            _context.AddEntity(update);
+            return update.Identifier;
+        }
+
+        /// <summary>
+        /// Register a new update associated with an ability update
+        /// </summary>
+        /// <param name="ability">The updated ability</param>
+        /// <returns>The identifier of the new update</returns>
+        public long UpdateAbility(Models.Abilities.Ability ability)
+        {
+            var currentUpdates = _context.GetEntities();
+            
+            var updates = new List<string>
+            {
+                $"UPDATE;ABILITY;{ability.Key};Name;{ability.Name};",
+                $"UPDATE;ABILITY;{ability.Key};Active;{ability.Active};",
+                $"UPDATE;ABILITY;{ability.Key};Passive;{ability.Passive};",
+                $"UPDATE;ABILITY;{ability.Key};EffectKey;{ability.EffectKey};",
+            };
+
+            var update = new Update
+            {
+                Updates = updates,
+                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
+                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
+            };
+            _context.AddEntity(update);
+            return update.Identifier;
+        }
+
+        /// <summary>
+        /// Register a new update associated with an ability deletion
+        /// </summary>
+        /// <param name="ability">The ability to delete</param>
+        /// <returns>The identifier of the new update</returns>
+        public long DeleteAbility(Models.Abilities.Ability ability)
+        {
+            var currentUpdates = _context.GetEntities();
+            
+            var update = new Update
+            {
+                Updates = new List<string>
+                {
+                    $"DELETE;CHAMPION;{ability.Key}"
+                },
+                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
+                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
+            };
+            _context.AddEntity(update);
+            return update.Identifier;
+        }
+        
+        #endregion ABILITY
+        
+        #region ABILITY_EFFECT
+        
+        /// <summary>
+        /// Register a new update associated with an ability effect creation
+        /// </summary>
+        /// <param name="effect">The ability effect to register</param>
+        /// <returns>The identifier of the new update</returns>
+        public long RegisterAbilityEffect(AbilityEffect effect)
+        {
+            var currentUpdates = _context.GetEntities();
+
+            var updates = new List<string>
+            {
+                $"CREATE;ABILITYEFFECT;{effect.Key}",
+                $"SET;ABILITY;{effect.Key};Name;{effect.Name};",
+                $"SET;ABILITY;{effect.Key};Value;{effect.Value};",
+            };
+
+            var update = new Update
+            {
+                Updates = updates,
+                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
+                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
+            };
+            _context.AddEntity(update);
+            return update.Identifier;
+        }
+
+        /// <summary>
+        /// Register a new update associated with an ability effect update
+        /// </summary>
+        /// <param name="effect">The updated ability effect</param>
+        /// <returns>The identifier of the new update</returns>
+        public long UpdateAbilityEffect(AbilityEffect effect)
+        {
+            var currentUpdates = _context.GetEntities();
+            
+            var updates = new List<string>
+            {
+                $"UPDATE;ABILITYEFFECT;{effect.Key};Name;{effect.Name};",
+                $"UPDATE;ABILITYEFFECT;{effect.Key};Value;{effect.Value};",
+            };
+
+            var update = new Update
+            {
+                Updates = updates,
+                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
+                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
+            };
+            _context.AddEntity(update);
+            return update.Identifier;
+        }
+
+        /// <summary>
+        /// Register a new update associated with an ability effect deletion
+        /// </summary>
+        /// <param name="effect">The ability effect to delete</param>
+        /// <returns>The identifier of the new update</returns>
+        public long DeleteAbilityEffect(AbilityEffect effect)
+        {
+            var currentUpdates = _context.GetEntities();
+            
+            var update = new Update
+            {
+                Updates = new List<string>
+                {
+                    $"DELETE;CHAMPION;{effect.Key}"
+                },
+                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
+                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
+            };
+            _context.AddEntity(update);
+            return update.Identifier;
+        }
+        
+        #endregion ABILITY_EFFECT
+
+        #region UPDATES
 
         /// <summary>
         /// Register a new update
@@ -223,6 +384,8 @@ namespace TFT_Friendly.Back.Services.Updates
                 throw new EntityNotFoundException("This Updates doesn't exists.");
             _context.DeleteEntity(identifier.ToString());
         }
+
+        #endregion UPDATES
 
         #endregion METHODS
     }

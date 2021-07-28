@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TFT_Friendly.Back.Models.Abilities;
 using TFT_Friendly.Back.Models.Champions;
 using TFT_Friendly.Back.Models.Updates;
 
@@ -16,6 +17,18 @@ namespace TFT_Friendly.Back.Services.Updates
         public long UpdateChampion(Champion champion);
         
         public long DeleteChampion(Champion champion);
+        
+        public long RegisterAbility(Models.Abilities.Ability ability);
+
+        public long UpdateAbility(Models.Abilities.Ability ability);
+        
+        public long DeleteAbility(Models.Abilities.Ability ability);
+        
+        public long RegisterAbilityEffect(AbilityEffect effect);
+
+        public long UpdateAbilityEffect(AbilityEffect effect);
+        
+        public long DeleteAbilityEffect(AbilityEffect effect);
         
         public long GetLastUpdateIdentifier();
 
