@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using TFT_Friendly.Back.Exceptions;
@@ -5,6 +6,7 @@ using TFT_Friendly.Back.Models.Abilities;
 using TFT_Friendly.Back.Models.Configurations;
 using TFT_Friendly.Back.Models.Database;
 using TFT_Friendly.Back.Services.Mongo;
+using TFT_Friendly.Back.Services.Updates;
 
 namespace TFT_Friendly.Back.Services.Ability
 {
@@ -17,19 +19,22 @@ namespace TFT_Friendly.Back.Services.Ability
 
         private readonly EntityContext<Models.Abilities.Ability> _abilityContext;
         private readonly EntityContext<AbilityEffect> _abilityEffectContext;
+        private readonly IUpdateService _updateService;
 
         #endregion MEMBERS
 
         #region CONSTRUCTOR
-        
+
         /// <summary>
         /// Initializes a new <see cref="AbilityService"/> class
         /// </summary>
         /// <param name="configuration">The database configuration to use</param>
-        public AbilityService(IOptions<DatabaseConfiguration> configuration)
+        /// <param name="updateService">The update service to use</param>
+        public AbilityService(IOptions<DatabaseConfiguration> configuration, IUpdateService updateService)
         {
             _abilityContext = new EntityContext<Models.Abilities.Ability>(CurrentDb.Ability, configuration);
             _abilityEffectContext = new EntityContext<AbilityEffect>(CurrentDb.AbilityEffect, configuration);
+            _updateService = updateService ?? throw new ArgumentNullException(nameof(updateService));
         }
         
         #endregion CONSTRUCTOR
@@ -74,7 +79,9 @@ namespace TFT_Friendly.Back.Services.Ability
             {
                 throw new EntityConflictException("An ability with this key already exists");
             }
-            return _abilityContext.AddEntity(ability);
+            _abilityContext.AddEntity(ability);
+            _updateService.RegisterAbility(ability);
+            return ability;
         }
 
         /// <summary>
@@ -90,7 +97,9 @@ namespace TFT_Friendly.Back.Services.Ability
             {
                 throw new EntityNotFoundException("This Ability doesn't exists");
             }
-            return _abilityContext.UpdateEntity(key, ability);
+            _abilityContext.UpdateEntity(key, ability);
+            _updateService.UpdateAbility(ability);
+            return ability;
         }
 
         /// <summary>
@@ -104,7 +113,9 @@ namespace TFT_Friendly.Back.Services.Ability
             {
                 throw new EntityNotFoundException("This Ability doesn't exists");
             }
+            var ability = _abilityContext.GetEntity(key);
             _abilityContext.DeleteEntity(key);
+            _updateService.DeleteAbility(ability);
         }
 
         #endregion ABILITY
@@ -147,7 +158,9 @@ namespace TFT_Friendly.Back.Services.Ability
             {
                 throw new EntityConflictException("An AbilityEffect with this key already exists");
             }
-            return _abilityEffectContext.AddEntity(effect);
+            _abilityEffectContext.AddEntity(effect);
+            _updateService.RegisterAbilityEffect(effect);
+            return effect;
         }
 
         /// <summary>
@@ -163,7 +176,9 @@ namespace TFT_Friendly.Back.Services.Ability
             {
                 throw new EntityNotFoundException("This AbilityEffect doesn't exists");
             }
-            return _abilityEffectContext.UpdateEntity(key, effect);
+            _abilityEffectContext.UpdateEntity(key, effect);
+            _updateService.UpdateAbilityEffect(effect);
+            return effect;
         }
 
         /// <summary>
@@ -177,7 +192,10 @@ namespace TFT_Friendly.Back.Services.Ability
             {
                 throw new EntityNotFoundException("This AbilityEffect doesn't exists");
             }
+
+            var effect = _abilityEffectContext.GetEntity(key);
             _abilityEffectContext.DeleteEntity(key);
+            _updateService.DeleteAbilityEffect(effect);
         }
 
         #endregion ABILITY_EFFECT
