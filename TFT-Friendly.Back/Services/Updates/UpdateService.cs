@@ -46,8 +46,6 @@ namespace TFT_Friendly.Back.Services.Updates
         /// <returns>The identifier of the new update</returns>
         public long RegisterChampion(Champion champion)
         {
-            var currentUpdates = _context.GetEntities();
-
             var updates = new List<string>
             {
                 $"CREATE;CHAMPION;{champion.Key}",
@@ -65,15 +63,7 @@ namespace TFT_Friendly.Back.Services.Updates
             updates.AddRange(champion.Health.Select(health => $"APPEND;CHAMPION;{champion.Key};Health;{health}"));
             updates.AddRange(champion.Damage.Select(damage => $"APPEND;CHAMPION;{champion.Key};Damage;{damage}"));
             updates.AddRange(champion.Dps.Select(dps => $"APPEND;CHAMPION;{champion.Key};Dps;{dps}"));
-
-            var update = new Update
-            {
-                Updates = updates,
-                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
-                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
-            };
-            _context.AddEntity(update);
-            return update.Identifier;
+            return RegisterUpdate(updates);
         }
 
         /// <summary>
@@ -83,8 +73,6 @@ namespace TFT_Friendly.Back.Services.Updates
         /// <returns>The identifier of the new update</returns>
         public long UpdateChampion(Champion champion)
         {
-            var currentUpdates = _context.GetEntities();
-            
             var updates = new List<string>
             {
                 $"UPDATE;CHAMPION;{champion.Key};Name;{champion.Name};",
@@ -106,15 +94,7 @@ namespace TFT_Friendly.Back.Services.Updates
             updates.AddRange(champion.Health.Select(health => $"APPEND;CHAMPION;{champion.Key};Health;{health}"));
             updates.AddRange(champion.Damage.Select(damage => $"APPEND;CHAMPION;{champion.Key};Damage;{damage}"));
             updates.AddRange(champion.Dps.Select(dps => $"APPEND;CHAMPION;{champion.Key};Dps;{dps}"));
-            
-            var update = new Update
-            {
-                Updates = updates,
-                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
-                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
-            };
-            _context.AddEntity(update);
-            return update.Identifier;
+            return RegisterUpdate(updates);
         }
 
         /// <summary>
@@ -124,19 +104,10 @@ namespace TFT_Friendly.Back.Services.Updates
         /// <returns>The identifier of the new update</returns>
         public long DeleteChampion(Champion champion)
         {
-            var currentUpdates = _context.GetEntities();
-            
-            var update = new Update
+            return RegisterUpdate(new List<string>
             {
-                Updates = new List<string>
-                {
-                    $"DELETE;CHAMPION;{champion.Key}"
-                },
-                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
-                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
-            };
-            _context.AddEntity(update);
-            return update.Identifier;
+                $"DELETE;CHAMPION;{champion.Key}"
+            });
         }
 
         #endregion CHAMPIONS
@@ -150,8 +121,6 @@ namespace TFT_Friendly.Back.Services.Updates
         /// <returns>The identifier of the new update</returns>
         public long RegisterAbility(Models.Abilities.Ability ability)
         {
-            var currentUpdates = _context.GetEntities();
-
             var updates = new List<string>
             {
                 $"CREATE;ABILITY;{ability.Key}",
@@ -160,15 +129,7 @@ namespace TFT_Friendly.Back.Services.Updates
                 $"SET;ABILITY;{ability.Key};Passive;{ability.Passive};",
                 $"SET;ABILITY;{ability.Key};EffectKey;{ability.EffectKey};",
             };
-
-            var update = new Update
-            {
-                Updates = updates,
-                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
-                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
-            };
-            _context.AddEntity(update);
-            return update.Identifier;
+            return RegisterUpdate(updates);
         }
 
         /// <summary>
@@ -178,8 +139,6 @@ namespace TFT_Friendly.Back.Services.Updates
         /// <returns>The identifier of the new update</returns>
         public long UpdateAbility(Models.Abilities.Ability ability)
         {
-            var currentUpdates = _context.GetEntities();
-            
             var updates = new List<string>
             {
                 $"UPDATE;ABILITY;{ability.Key};Name;{ability.Name};",
@@ -187,15 +146,7 @@ namespace TFT_Friendly.Back.Services.Updates
                 $"UPDATE;ABILITY;{ability.Key};Passive;{ability.Passive};",
                 $"UPDATE;ABILITY;{ability.Key};EffectKey;{ability.EffectKey};",
             };
-
-            var update = new Update
-            {
-                Updates = updates,
-                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
-                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
-            };
-            _context.AddEntity(update);
-            return update.Identifier;
+            return RegisterUpdate(updates);
         }
 
         /// <summary>
@@ -205,19 +156,10 @@ namespace TFT_Friendly.Back.Services.Updates
         /// <returns>The identifier of the new update</returns>
         public long DeleteAbility(Models.Abilities.Ability ability)
         {
-            var currentUpdates = _context.GetEntities();
-            
-            var update = new Update
+            return RegisterUpdate(new List<string>
             {
-                Updates = new List<string>
-                {
-                    $"DELETE;CHAMPION;{ability.Key}"
-                },
-                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
-                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
-            };
-            _context.AddEntity(update);
-            return update.Identifier;
+                $"DELETE;CHAMPION;{ability.Key}"
+            });
         }
         
         #endregion ABILITY
@@ -231,23 +173,13 @@ namespace TFT_Friendly.Back.Services.Updates
         /// <returns>The identifier of the new update</returns>
         public long RegisterAbilityEffect(AbilityEffect effect)
         {
-            var currentUpdates = _context.GetEntities();
-
             var updates = new List<string>
             {
                 $"CREATE;ABILITYEFFECT;{effect.Key}",
                 $"SET;ABILITY;{effect.Key};Name;{effect.Name};",
                 $"SET;ABILITY;{effect.Key};Value;{effect.Value};",
             };
-
-            var update = new Update
-            {
-                Updates = updates,
-                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
-                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
-            };
-            _context.AddEntity(update);
-            return update.Identifier;
+            return RegisterUpdate(updates);
         }
 
         /// <summary>
@@ -257,22 +189,12 @@ namespace TFT_Friendly.Back.Services.Updates
         /// <returns>The identifier of the new update</returns>
         public long UpdateAbilityEffect(AbilityEffect effect)
         {
-            var currentUpdates = _context.GetEntities();
-            
             var updates = new List<string>
             {
                 $"UPDATE;ABILITYEFFECT;{effect.Key};Name;{effect.Name};",
                 $"UPDATE;ABILITYEFFECT;{effect.Key};Value;{effect.Value};",
             };
-
-            var update = new Update
-            {
-                Updates = updates,
-                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
-                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
-            };
-            _context.AddEntity(update);
-            return update.Identifier;
+            return RegisterUpdate(updates);
         }
 
         /// <summary>
@@ -282,19 +204,10 @@ namespace TFT_Friendly.Back.Services.Updates
         /// <returns>The identifier of the new update</returns>
         public long DeleteAbilityEffect(AbilityEffect effect)
         {
-            var currentUpdates = _context.GetEntities();
-            
-            var update = new Update
+            return RegisterUpdate(new List<string>
             {
-                Updates = new List<string>
-                {
-                    $"DELETE;CHAMPION;{effect.Key}"
-                },
-                Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
-                Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
-            };
-            _context.AddEntity(update);
-            return update.Identifier;
+                $"DELETE;CHAMPION;{effect.Key}"
+            });
         }
         
         #endregion ABILITY_EFFECT
@@ -314,8 +227,8 @@ namespace TFT_Friendly.Back.Services.Updates
                 return _context.AddEntity(new Update
                 {
                     Updates = updates,
-                    Identifier = currentUpdates.Count > 0 ? currentUpdates.Last().Identifier + 1 : 0,
-                    Key = currentUpdates.Count > 0 ? (currentUpdates.Last().Identifier + 1).ToString() : "0"
+                    Identifier = currentUpdates.Last().Identifier + 1,
+                    Key = (currentUpdates.Last().Identifier + 1).ToString()
                 }).Identifier;
             }
             return _context.AddEntity(new Update
