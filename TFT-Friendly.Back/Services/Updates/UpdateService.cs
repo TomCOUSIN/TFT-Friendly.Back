@@ -6,6 +6,9 @@ using TFT_Friendly.Back.Models.Abilities;
 using TFT_Friendly.Back.Models.Champions;
 using TFT_Friendly.Back.Models.Configurations;
 using TFT_Friendly.Back.Models.Database;
+using TFT_Friendly.Back.Models.Items;
+using TFT_Friendly.Back.Models.Sets;
+using TFT_Friendly.Back.Models.Traits;
 using TFT_Friendly.Back.Models.Updates;
 using TFT_Friendly.Back.Services.Mongo;
 
@@ -211,6 +214,178 @@ namespace TFT_Friendly.Back.Services.Updates
         }
         
         #endregion ABILITY_EFFECT
+
+        #region ITEMS
+
+        /// <summary>
+        /// Register a new update associated with an item creation
+        /// </summary>
+        /// <param name="item">The item to register</param>
+        /// <returns>The identifier of the new update</returns>
+        public long RegisterItem(Item item)
+        {
+
+            var updates = new List<string>
+            {
+                $"CREATE;ITEM;{item.Key}",
+                $"SET;ITEM;{item.Key};Name;{item.Name};",
+                $"SET;ITEM;{item.Key};ItemId;{item.ItemId};",
+                $"SET;ITEM;{item.Key};Description;{item.Description};",
+                $"SET;ITEM;{item.Key};IsUnique;{item.IsUnique};",
+                $"SET;ITEM;{item.Key};IsRadiant;{item.IsRadiant};",
+                $"SET;ITEM;{item.Key};IsShadow;{item.IsShadow};",
+            };
+            updates.AddRange(item.Components.Select(component => $"APPEND;ITEM;{item.Key};Components;{component}"));
+            return RegisterUpdate(updates);
+        }
+
+        /// <summary>
+        /// Register a new update associated with an item update
+        /// </summary>
+        /// <param name="item">The updated item</param>
+        /// <returns>The identifier of the new update</returns>
+        public long UpdateItem(Item item)
+        {
+            var updates = new List<string>
+            {
+                $"UPDATE;ITEM;{item.Key};Name;{item.Name};",
+                $"UPDATE;ITEM;{item.Key};ItemId;{item.ItemId};",
+                $"UPDATE;ITEM;{item.Key};Description;{item.Description};",
+                $"UPDATE;ITEM;{item.Key};IsUnique;{item.IsUnique};",
+                $"UPDATE;ITEM;{item.Key};IsRadiant;{item.IsRadiant};",
+                $"UPDATE;ITEM;{item.Key};IsShadow;{item.IsShadow};",
+                $"REMOVE;ITEM;{item.Key};Components;",
+            };
+            updates.AddRange(item.Components.Select(component => $"APPEND;ITEM;{item.Key};Components;{component}"));
+            return RegisterUpdate(updates);
+        }
+
+        /// <summary>
+        /// Register a new update associated with an item deletion
+        /// </summary>
+        /// <param name="item">The item to delete</param>
+        /// <returns>The identifier of the new update</returns>
+        public long DeleteItem(Item item)
+        {
+            return RegisterUpdate(new List<string>
+            {
+                $"DELETE;ITEM;{item.Key}"
+            });
+        }
+
+        #endregion ITEMS
+
+        #region TRAITS
+
+        /// <summary>
+        /// Register a new update associated with a trait creation
+        /// </summary>
+        /// <param name="trait">The trait to register</param>
+        /// <returns>The identifier of the new update</returns>
+        public long RegisterTrait(Trait trait)
+        {
+
+            var updates = new List<string>
+            {
+                $"CREATE;TRAIT;{trait.Key}",
+                $"SET;TRAIT;{trait.Key};Name;{trait.Name};",
+                $"SET;TRAIT;{trait.Key};Type;{trait.Type};",
+                $"SET;TRAIT;{trait.Key};Description;{trait.Description};",
+            };
+            updates.AddRange(trait.Levels.Select(level => $"APPEND;TRAIT;{trait.Key};Levels;{level}"));
+            return RegisterUpdate(updates);
+        }
+
+        /// <summary>
+        /// Register a new update associated with a trait update
+        /// </summary>
+        /// <param name="trait">The updated trait</param>
+        /// <returns>The identifier of the new update</returns>
+        public long UpdateTrait(Trait trait)
+        {
+            var updates = new List<string>
+            {
+                $"UPDATE;TRAIT;{trait.Key};Name;{trait.Name};",
+                $"UPDATE;TRAIT;{trait.Key};Type;{trait.Type};",
+                $"UPDATE;TRAIT;{trait.Key};Description;{trait.Description};",
+                $"REMOVE;TRAIT;{trait.Key};Levels;{trait.Type};",
+            };
+            updates.AddRange(trait.Levels.Select(level => $"APPEND;TRAIT;{trait.Key};Levels;{level}"));
+            return RegisterUpdate(updates);
+        }
+
+        /// <summary>
+        /// Register a new update associated with a trait deletion
+        /// </summary>
+        /// <param name="trait">The trait to delete</param>
+        /// <returns>The identifier of the new update</returns>
+        public long DeleteTrait(Trait trait)
+        {
+            return RegisterUpdate(new List<string>
+            {
+                $"DELETE;TRAIT;{trait.Key}"
+            });
+        }
+
+        #endregion TRAITS
+
+        #region SETS
+
+        /// <summary>
+        /// Register a new update associated with a set creation
+        /// </summary>
+        /// <param name="set">The set to register</param>
+        /// <returns>The identifier of the new update</returns>
+        public long RegisterSet(Set set)
+        {
+            var updates = new List<string>
+            {
+                $"CREATE;SET;{set.Key}",
+                $"SET;SET;{set.Key};Name;{set.Name};",
+            };
+            updates.AddRange(set.ChampionsKey.Select(champion => $"APPEND;SET;{set.Key};ChampionsKey;{champion}"));
+            updates.AddRange(set.ItemsKey.Select(item => $"APPEND;SET;{set.Key};ItemsKey;{item}"));
+            updates.AddRange(set.OriginsKey.Select(origin => $"APPEND;SET;{set.Key};OriginsKey;{origin}"));
+            updates.AddRange(set.TraitsKey.Select(trait => $"APPEND;SET;{set.Key};TraitsKey;{trait}"));
+            return RegisterUpdate(updates);
+        }
+
+        /// <summary>
+        /// Register a new update associated with a set update
+        /// </summary>
+        /// <param name="set">The updated set</param>
+        /// <returns>The identifier of the new update</returns>
+        public long UpdateSet(Set set)
+        {
+            var updates = new List<string>
+            {
+                $"UPDATE;SET;{set.Key};Name;{set.Name};",
+                $"REMOVE;SET;{set.Key};ChampionsKey;",
+                $"REMOVE;SET;{set.Key};ItemsKey;",
+                $"REMOVE;SET;{set.Key};OriginsKey;",
+                $"REMOVE;SET;{set.Key};TraitsKey;",
+            };
+            updates.AddRange(set.ChampionsKey.Select(champion => $"APPEND;SET;{set.Key};ChampionsKey;{champion}"));
+            updates.AddRange(set.ItemsKey.Select(item => $"APPEND;SET;{set.Key};ItemsKey;{item}"));
+            updates.AddRange(set.OriginsKey.Select(origin => $"APPEND;SET;{set.Key};OriginsKey;{origin}"));
+            updates.AddRange(set.TraitsKey.Select(trait => $"APPEND;SET;{set.Key};TraitsKey;{trait}"));
+            return RegisterUpdate(updates);
+        }
+
+        /// <summary>
+        /// Register a new update associated with a set deletion
+        /// </summary>
+        /// <param name="set">The set to delete</param>
+        /// <returns>The identifier of the new update</returns>
+        public long DeleteSet(Set set)
+        {
+            return RegisterUpdate(new List<string>
+            {
+                $"DELETE;SET;{set.Key}"
+            });
+        }
+
+        #endregion SETS
 
         #region UPDATES
 
