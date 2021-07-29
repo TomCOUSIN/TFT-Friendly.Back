@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using TFT_Friendly.Back.Exceptions;
 using TFT_Friendly.Back.Models.Abilities;
 using TFT_Friendly.Back.Models.Champions;
@@ -292,11 +293,11 @@ namespace TFT_Friendly.Back.Services.Updates
                 $"SET;TRAIT;{trait.Key};Type;{trait.Type};",
                 $"SET;TRAIT;{trait.Key};Description;{trait.Description};",
             };
-            updates.AddRange(trait.Levels.Select(level => $"APPEND;TRAIT;{trait.Key};Levels;{level}"));
+            updates.AddRange(trait.Levels.Select(level => $"APPEND;TRAIT;{trait.Key};Levels;{level.ToJson()}"));
             return RegisterUpdate(updates);
         }
 
-        /// <summary>
+        /// <summary> b 
         /// Register a new update associated with a trait update
         /// </summary>
         /// <param name="trait">The updated trait</param>
@@ -310,7 +311,7 @@ namespace TFT_Friendly.Back.Services.Updates
                 $"UPDATE;TRAIT;{trait.Key};Description;{trait.Description};",
                 $"REMOVE;TRAIT;{trait.Key};Levels;{trait.Type};",
             };
-            updates.AddRange(trait.Levels.Select(level => $"APPEND;TRAIT;{trait.Key};Levels;{level}"));
+            updates.AddRange(trait.Levels.Select(level => $"APPEND;TRAIT;{trait.Key};Levels;{level.ToJson()}"));
             return RegisterUpdate(updates);
         }
 
