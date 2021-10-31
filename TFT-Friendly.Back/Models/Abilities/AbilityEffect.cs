@@ -19,6 +19,12 @@ namespace TFT_Friendly.Back.Models.Abilities
         /// Value of the ability effect
         /// </summary>
         [BsonElement("value")]
-        public List<int> Value { get; set; }
+        public List<double> Value { get; set; }
+        
+        /// <summary>
+        /// Boolean to check if the value is a percentage
+        /// </summary>
+        [BsonElement("is_percentage")]
+        public bool IsPercentage { get; set; }
     }
 }

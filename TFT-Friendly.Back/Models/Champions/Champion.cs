@@ -77,6 +77,12 @@ namespace TFT_Friendly.Back.Models.Champions
         public int Range { get; set; }
         
         /// <summary>
+        /// Base Mana of the champion
+        /// </summary>
+        [BsonElement("base_mana")]
+        public int BaseMana { get; set; }
+        
+        /// <summary>
         /// Mana Max of the champion
         /// </summary>
         [BsonElement("mana_max")]

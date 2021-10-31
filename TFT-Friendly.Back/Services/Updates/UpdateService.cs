@@ -60,6 +60,7 @@ namespace TFT_Friendly.Back.Services.Updates
                 $"SET;CHAMPION;{champion.Key};Speed;{champion.Speed};",
                 $"SET;CHAMPION;{champion.Key};Range;{champion.Range};",
                 $"SET;CHAMPION;{champion.Key};ManaMax;{champion.ManaMax};",
+                $"SET;CHAMPION;{champion.Key};BaseMana;{champion.BaseMana};",
                 $"SET;CHAMPION;{champion.Key};AbilityKey;{champion.AbilityKey};",
             };
             updates.AddRange(champion.Traits.Select(trait => $"APPEND;CHAMPION;{champion.Key};Traits;{trait}"));
@@ -86,6 +87,7 @@ namespace TFT_Friendly.Back.Services.Updates
                 $"UPDATE;CHAMPION;{champion.Key};Speed;{champion.Speed};",
                 $"UPDATE;CHAMPION;{champion.Key};Range;{champion.Range};",
                 $"UPDATE;CHAMPION;{champion.Key};ManaMax;{champion.ManaMax};",
+                $"UPDATE;CHAMPION;{champion.Key};BaseMana;{champion.BaseMana};",
                 $"UPDATE;CHAMPION;{champion.Key};AbilityKey;{champion.AbilityKey};",
                 $"REMOVE;CHAMPION;{champion.Key};Traits",
                 $"REMOVE;CHAMPION;{champion.Key};Origins",
@@ -182,6 +184,7 @@ namespace TFT_Friendly.Back.Services.Updates
             {
                 $"CREATE;ABILITYEFFECT;{effect.Key}",
                 $"SET;ABILITYEFFECT;{effect.Key};Name;{effect.Name};",
+                $"SET;ABILITYEFFECT;{effect.Key};IsPercentage;{effect.IsPercentage};",
             };
             updates.AddRange(effect.Value.Select(value => $"APPEND;ABILITYEFFECT;{effect.Key};Value;{value}"));
             return RegisterUpdate(updates);
@@ -198,6 +201,7 @@ namespace TFT_Friendly.Back.Services.Updates
             {
                 $"UPDATE;ABILITYEFFECT;{effect.Key};Name;{effect.Name};",
                 $"REMOVE;ABILITYEFFECT;{effect.Key};Value",
+                $"UPDATE;ABILITYEFFECT;{effect.Key};IsPercentage;{effect.IsPercentage};",
             };
             updates.AddRange(effect.Value.Select(value => $"APPEND;ABILITYEFFECT;{effect.Key};Value;{value}"));
             return RegisterUpdate(updates);
@@ -294,6 +298,7 @@ namespace TFT_Friendly.Back.Services.Updates
                 $"SET;TRAIT;{trait.Key};Name;{trait.Name};",
                 $"SET;TRAIT;{trait.Key};Type;{trait.Type};",
                 $"SET;TRAIT;{trait.Key};Description;{trait.Description};",
+                $"SET;TRAIT;{trait.Key};Passive;{trait.Passive};",
             };
             updates.AddRange(trait.Levels.Select(level => $"APPEND;TRAIT;{trait.Key};Levels;{level.ToJson()}"));
             return RegisterUpdate(updates);
@@ -311,7 +316,8 @@ namespace TFT_Friendly.Back.Services.Updates
                 $"UPDATE;TRAIT;{trait.Key};Name;{trait.Name};",
                 $"UPDATE;TRAIT;{trait.Key};Type;{trait.Type};",
                 $"UPDATE;TRAIT;{trait.Key};Description;{trait.Description};",
-                $"REMOVE;TRAIT;{trait.Key};Levels;{trait.Type};",
+                $"REMOVE;TRAIT;{trait.Key};Levels;{trait.Levels};",
+                $"UPDATE;TRAIT;{trait.Key};Passive;{trait.Passive};",
             };
             updates.AddRange(trait.Levels.Select(level => $"APPEND;TRAIT;{trait.Key};Levels;{level.ToJson()}"));
             return RegisterUpdate(updates);
@@ -345,6 +351,9 @@ namespace TFT_Friendly.Back.Services.Updates
             {
                 $"CREATE;SET;{set.Key}",
                 $"SET;SET;{set.Key};Name;{set.Name};",
+                $"SET;SET;{set.Key};IsCurrentSet;{set.IsCurrentSet};",
+                $"SET;SET;{set.Key};StartDate;{set.StartDate};",
+                $"SET;SET;{set.Key};EndDate;{set.EndDate};",
             };
             updates.AddRange(set.ChampionsKey.Select(champion => $"APPEND;SET;{set.Key};ChampionsKey;{champion}"));
             updates.AddRange(set.ItemsKey.Select(item => $"APPEND;SET;{set.Key};ItemsKey;{item}"));
@@ -367,6 +376,9 @@ namespace TFT_Friendly.Back.Services.Updates
                 $"REMOVE;SET;{set.Key};ItemsKey;",
                 $"REMOVE;SET;{set.Key};OriginsKey;",
                 $"REMOVE;SET;{set.Key};TraitsKey;",
+                $"UPDATE;SET;{set.Key};IsCurrentSet;{set.IsCurrentSet};",
+                $"UPDATE;SET;{set.Key};StartDate;{set.StartDate};",
+                $"UPDATE;SET;{set.Key};EndDate;{set.EndDate};",
             };
             updates.AddRange(set.ChampionsKey.Select(champion => $"APPEND;SET;{set.Key};ChampionsKey;{champion}"));
             updates.AddRange(set.ItemsKey.Select(item => $"APPEND;SET;{set.Key};ItemsKey;{item}"));
