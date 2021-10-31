@@ -128,11 +128,11 @@ namespace TFT_Friendly.Back.Services.Updates
             var updates = new List<string>
             {
                 $"CREATE;ABILITY;{ability.Key}",
-                $"SET;ABILITY;{ability.Key};Name;{ability.Name};",
-                $"SET;ABILITY;{ability.Key};Active;{ability.Active};",
-                $"SET;ABILITY;{ability.Key};Passive;{ability.Passive};",
-                $"SET;ABILITY;{ability.Key};EffectKey;{ability.EffectKey};",
+                $"SET;ABILITY;{ability.Key};Name;{ability.Name}",
+                $"SET;ABILITY;{ability.Key};Active;{ability.Active}",
+                $"SET;ABILITY;{ability.Key};Passive;{ability.Passive}",
             };
+            updates.AddRange(ability.EffectKey.Select(effect => $"APPEND;ABILITY;{ability.Key};EffectKey;{effect}"));
             return RegisterUpdate(updates);
         }
 
@@ -145,11 +145,12 @@ namespace TFT_Friendly.Back.Services.Updates
         {
             var updates = new List<string>
             {
-                $"UPDATE;ABILITY;{ability.Key};Name;{ability.Name};",
-                $"UPDATE;ABILITY;{ability.Key};Active;{ability.Active};",
-                $"UPDATE;ABILITY;{ability.Key};Passive;{ability.Passive};",
-                $"UPDATE;ABILITY;{ability.Key};EffectKey;{ability.EffectKey};",
+                $"UPDATE;ABILITY;{ability.Key};Name;{ability.Name}",
+                $"UPDATE;ABILITY;{ability.Key};Active;{ability.Active}",
+                $"UPDATE;ABILITY;{ability.Key};Passive;{ability.Passive}",
+                $"REMOVE;ABILITY;{ability.Key};EffectKey",
             };
+            updates.AddRange(ability.EffectKey.Select(effect => $"APPEND;ABILITY;{ability.Key};EffectKey;{effect}"));
             return RegisterUpdate(updates);
         }
 
@@ -162,7 +163,7 @@ namespace TFT_Friendly.Back.Services.Updates
         {
             return RegisterUpdate(new List<string>
             {
-                $"DELETE;CHAMPION;{ability.Key}"
+                $"DELETE;ABILITY;{ability.Key}"
             });
         }
         
@@ -180,9 +181,9 @@ namespace TFT_Friendly.Back.Services.Updates
             var updates = new List<string>
             {
                 $"CREATE;ABILITYEFFECT;{effect.Key}",
-                $"SET;ABILITY;{effect.Key};Name;{effect.Name};",
-                $"SET;ABILITY;{effect.Key};Value;{effect.Value};",
+                $"SET;ABILITYEFFECT;{effect.Key};Name;{effect.Name};",
             };
+            updates.AddRange(effect.Value.Select(value => $"APPEND;ABILITYEFFECT;{effect.Key};Value;{value}"));
             return RegisterUpdate(updates);
         }
 
@@ -196,8 +197,9 @@ namespace TFT_Friendly.Back.Services.Updates
             var updates = new List<string>
             {
                 $"UPDATE;ABILITYEFFECT;{effect.Key};Name;{effect.Name};",
-                $"UPDATE;ABILITYEFFECT;{effect.Key};Value;{effect.Value};",
+                $"REMOVE;ABILITYEFFECT;{effect.Key};Value",
             };
+            updates.AddRange(effect.Value.Select(value => $"APPEND;ABILITYEFFECT;{effect.Key};Value;{value}"));
             return RegisterUpdate(updates);
         }
 
@@ -210,7 +212,7 @@ namespace TFT_Friendly.Back.Services.Updates
         {
             return RegisterUpdate(new List<string>
             {
-                $"DELETE;CHAMPION;{effect.Key}"
+                $"DELETE;ABILITYEFFECT;{effect.Key}"
             });
         }
         
@@ -422,7 +424,7 @@ namespace TFT_Friendly.Back.Services.Updates
         public long GetLastUpdateIdentifier()
         {
             var updates = _context.GetEntities();
-            return updates.Count > 0 ? updates.Last().Identifier : 0;
+            return updates.Count > 0 ? updates.Last().Identifier : -1;
         }
 
         /// <summary>
@@ -435,8 +437,8 @@ namespace TFT_Friendly.Back.Services.Updates
             var updates = _context.GetEntities();
             var fromUpdates = new List<Update>();
             var index = 0;
-            
-            while (updates[index].Identifier <= from)
+
+            while (updates[index].Identifier <= @from)
             {
                 ++index;
             }
