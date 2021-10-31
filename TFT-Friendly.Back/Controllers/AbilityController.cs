@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using TFT_Friendly.Back.Exceptions;
 using TFT_Friendly.Back.Models.Abilities;
 using TFT_Friendly.Back.Models.Errors;
@@ -20,6 +21,7 @@ namespace TFT_Friendly.Back.Controllers
         #region MEMBERS
         
         private readonly IAbilityService _abilityService;
+        private readonly ILogger<AbilityController> _logger;
         
         #endregion MEMBERS
 
@@ -29,10 +31,12 @@ namespace TFT_Friendly.Back.Controllers
         /// Initialize a new <see cref="AbilityController"/> class
         /// </summary>
         /// <param name="abilityService">The ability service to use</param>
+        /// <param name="logger">The logger to use</param>
         /// <exception cref="ArgumentNullException">Throw an exception if one parameter is null</exception>
-        public AbilityController(IAbilityService abilityService)
+        public AbilityController(IAbilityService abilityService,  ILogger<AbilityController> logger)
         {
             _abilityService = abilityService ?? throw new ArgumentNullException(nameof(abilityService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         #endregion CONSTRUCTOR
@@ -75,24 +79,30 @@ namespace TFT_Friendly.Back.Controllers
         }
 
         /// <summary>
-        /// Add an ability
+        /// Add multiple ability
         /// </summary>
+        /// <param name="abilities">The abilities to add</param>
         /// <returns>The ability created</returns>
         /// <response code="200">Everything worked well</response>
-        /// <response code="409">Ability with same key already exists</response>
-        [ProducesResponseType(typeof(Ability), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(HttpError), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(List<Ability>), StatusCodes.Status200OK)]
         [HttpPost]
-        public IActionResult AddAbility(Ability ability)
+        public IActionResult AddAbility(List<Ability> abilities)
         {
-            try
+            var addedAbilities = new List<Ability>();
+
+            foreach (var ability in abilities)
             {
-                return Ok(_abilityService.AddAbility(ability));
+                try
+                {
+                    var addedAbility = _abilityService.AddAbility(ability);
+                    addedAbilities.Add(addedAbility);
+                }
+                catch (EntityConflictException exception)
+                {
+                    _logger.LogError(exception.Message);
+                }
             }
-            catch (EntityConflictException exception)
-            {
-                return Conflict(new HttpError(StatusCodes.Status409Conflict, exception.Message));
-            }
+            return Ok(addedAbilities);
         }
 
         /// <summary>
@@ -176,25 +186,30 @@ namespace TFT_Friendly.Back.Controllers
         }
 
         /// <summary>
-        /// Add an ability effect
+        /// Add multiple ability effect
         /// </summary>
-        /// <param name="effect">The ability effect to add</param>
+        /// <param name="effects">The effects to add</param>
         /// <returns>The ability effect created</returns>
         /// <response code="200">Everything worked well</response>
-        /// <response code="409">AbilityEffect with same key already exists</response>
-        [ProducesResponseType(typeof(AbilityEffect), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(HttpError), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(List<AbilityEffect>), StatusCodes.Status200OK)]
         [HttpPost("/effect")]
-        public IActionResult AddAbilityEffect(AbilityEffect effect)
+        public IActionResult AddAbilityEffect(List<AbilityEffect> effects)
         {
-            try
+            var addedEffects = new List<AbilityEffect>();
+            
+            foreach (var effect in effects)
             {
-                return Ok(_abilityService.AddAbilityEffect(effect));
+                try
+                {
+                    var addedEffect = _abilityService.AddAbilityEffect(effect);
+                    addedEffects.Add(addedEffect);
+                }
+                catch (EntityConflictException exception)
+                {
+                    _logger.LogError(exception.Message);
+                }
             }
-            catch (EntityConflictException exception)
-            {
-                return Conflict(new HttpError(StatusCodes.Status409Conflict, exception.Message));
-            }
+            return Ok(addedEffects);
         }
 
         /// <summary>

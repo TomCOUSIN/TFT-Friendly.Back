@@ -6,6 +6,7 @@ using TFT_Friendly.Back.Models.Configurations;
 using TFT_Friendly.Back.Models.Database;
 using TFT_Friendly.Back.Models.Sets;
 using TFT_Friendly.Back.Services.Mongo;
+using TFT_Friendly.Back.Services.Updates;
 
 namespace TFT_Friendly.Back.Services.Sets
 {
@@ -17,6 +18,7 @@ namespace TFT_Friendly.Back.Services.Sets
         #region MEMBERS
 
         private readonly EntityContext<Set> _setsContext;
+        private readonly IUpdateService _updateService;
 
         #endregion MEMBERS
 
@@ -26,9 +28,11 @@ namespace TFT_Friendly.Back.Services.Sets
         /// Initialize a new <see cref="SetService"/> class
         /// </summary>
         /// <param name="configuration">The database configuration to use</param>
-        public SetService(IOptions<DatabaseConfiguration> configuration)
+        /// <param name="updateService">The update service to use</param>
+        public SetService(IOptions<DatabaseConfiguration> configuration, IUpdateService updateService)
         {
             _setsContext = new EntityContext<Set>(CurrentDb.Sets, configuration);
+            _updateService = updateService ?? throw new ArgumentNullException(nameof(updateService));
         }
 
         #endregion CONSTRUCTOR
@@ -49,7 +53,7 @@ namespace TFT_Friendly.Back.Services.Sets
         /// </summary>
         /// <param name="key">The key of the set</param>
         /// <returns>The requested set</returns>
-        /// <exception cref="SetNotFoundException">Throw an exception if set doesn't exist</exception>
+        /// <exception cref="EntityNotFoundException">Throw an exception if set doesn't exist</exception>
         public Set GetSet(string key)
         {
             if (!_setsContext.IsEntityExists(key))
@@ -62,12 +66,14 @@ namespace TFT_Friendly.Back.Services.Sets
         /// </summary>
         /// <param name="set">The set to add</param>
         /// <returns>The newly added set</returns>
-        /// <exception cref="SetConflictException">Throw an exception if a set with the same key already exist</exception>
+        /// <exception cref="EntityConflictException">Throw an exception if a set with the same key already exist</exception>
         public Set AddSet(Set set)
         {
             if (_setsContext.IsEntityExists(set.Key))
                 throw new EntityConflictException("A set with this key already exist");
-            return _setsContext.AddEntity(set);
+            _setsContext.AddEntity(set);
+            _updateService.RegisterSet(set);
+            return set;
         }
 
         /// <summary>
@@ -75,12 +81,14 @@ namespace TFT_Friendly.Back.Services.Sets
         /// </summary>
         /// <param name="set">The set to update</param>
         /// <returns>The updated set</returns>
-        /// <exception cref="SetNotFoundException">Throw an exception if the set doesn't exist</exception>
+        /// <exception cref="EntityNotFoundException">Throw an exception if the set doesn't exist</exception>
         public Set UpdateSet(Set set)
         {
             if (!_setsContext.IsEntityExists(set.Key))
                 throw new EntityNotFoundException("Set not found");
-            return _setsContext.UpdateEntity(set.Key, set);
+            _setsContext.UpdateEntity(set.Key, set);
+            _updateService.UpdateSet(set);
+            return set;
         }
 
         /// <summary>
@@ -89,24 +97,28 @@ namespace TFT_Friendly.Back.Services.Sets
         /// <param name="key">The key of the set to update</param>
         /// <param name="set">The set to update</param>
         /// <returns>The updated set</returns>
-        /// <exception cref="SetNotFoundException">Throw an exception if the set doesn't exist</exception>
+        /// <exception cref="EntityNotFoundException">Throw an exception if the set doesn't exist</exception>
         public Set UpdateSet(string key, Set set)
         {
             if (!_setsContext.IsEntityExists(key))
                 throw new EntityNotFoundException("Set not found");
-            return _setsContext.UpdateEntity(key, set);
+            _setsContext.UpdateEntity(key, set);
+            _updateService.UpdateSet(set);
+            return set;
         }
 
         /// <summary>
         /// Delete a set
         /// </summary>
         /// <param name="key">The key of set to delete</param>
-        /// <exception cref="SetNotFoundException">Throw an exception if the set doesn't exist</exception>
+        /// <exception cref="EntityNotFoundException">Throw an exception if the set doesn't exist</exception>
         public void DeleteSet(string key)
         {
             if (!_setsContext.IsEntityExists(key))
                 throw new EntityNotFoundException("Set not found");
+            var set = _setsContext.GetEntity(key);
             _setsContext.DeleteEntity(key);
+            _updateService.DeleteSet(set);
         }
 
         #endregion METHODS
