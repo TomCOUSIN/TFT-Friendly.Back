@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using MongoDB.Bson.Serialization.Attributes;
 using TFT_Friendly.Back.Models.Entities;
@@ -38,5 +39,23 @@ namespace TFT_Friendly.Back.Models.Sets
         /// </summary>
         [BsonElement("origins")]
         public List<string> OriginsKey { get; set; }
+        
+        /// <summary>
+        /// Boolean to check if it's the current set
+        /// </summary>
+        [BsonElement("is_current_set")]
+        public bool IsCurrentSet { get; set; }
+
+        /// <summary>
+        /// Start Date of the Set
+        /// </summary>
+        [BsonElement("start_date")]
+        public DateTime StartDate { get; set; }
+        
+        /// <summary>
+        /// End Date of the Set
+        /// </summary>
+        [BsonElement("end_date")]
+        public DateTime EndDate { get; set; }
     }
 }

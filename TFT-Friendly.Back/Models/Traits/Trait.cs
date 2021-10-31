@@ -32,5 +32,11 @@ namespace TFT_Friendly.Back.Models.Traits
         /// </summary>
         [BsonElement("Levels")]
         public List<TraitLevel> Levels { get; set; }
+        
+        /// <summary>
+        /// Passive of the Trait
+        /// </summary>
+        [BsonElement("Passive")]
+        public string Passive { get; set; }
     }
 }

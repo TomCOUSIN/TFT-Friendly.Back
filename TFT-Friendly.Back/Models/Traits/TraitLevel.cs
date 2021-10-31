@@ -24,5 +24,11 @@ namespace TFT_Friendly.Back.Models.Traits
         /// </summary>
         [BsonElement("Min")]
         public int Min { get; set; }
+        
+        /// <summary>
+        /// Description of the level
+        /// </summary>
+        [BsonElement("Description")]
+        public string Description { get; set; }
     }
 }
