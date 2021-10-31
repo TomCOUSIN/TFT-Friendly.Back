@@ -71,7 +71,7 @@ namespace TFT_Friendly.Back.Controllers
         /// <response code="200">Everything worked well</response>
         [ProducesResponseType(typeof(List<Update>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(HttpError), StatusCodes.Status404NotFound)]
-        [HttpGet("/from/{identifier:long}")]
+        [HttpGet("from/{identifier:long}")]
         public IActionResult GetUpdateList(long identifier = 0)
         {
             try
@@ -90,7 +90,7 @@ namespace TFT_Friendly.Back.Controllers
         /// <returns>The last identifier</returns>
         /// <response code="200">Everything worked well</response>
         [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
-        [HttpGet("/identifier")]
+        [HttpGet("identifier")]
         public IActionResult GetLastUpdateIdentifier()
         {
             return Ok(_service.GetLastUpdateIdentifier());
