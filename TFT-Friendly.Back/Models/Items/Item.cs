@@ -50,6 +50,6 @@ namespace TFT_Friendly.Back.Models.Items
         /// Components of the item
         /// </summary>
         [BsonElement("Components")]
-        public List<int> Components { get; set; }
+        public List<string> Components { get; set; }
     }
 }
