@@ -1,6 +1,12 @@
 # Riders Folders
-TFT-Friendly.Back/.idea
+.idea
 
 # Build Folders
-TFT-Friendly.Back/bin
-TFT-Friendly.Back/obj
+TFT-Friendly.Back.Api/bin
+TFT-Friendly.Back.Api/obj
+
+TFT-Friendly.Back.Domain/bin
+TFT-Friendly.Back.Domain/obj
+
+TFT-Friendly.Back.Infrastructure/bin
+TFT-Friendly.Back.Infrastructure/obj
